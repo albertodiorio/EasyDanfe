@@ -42,7 +42,7 @@ internal class DanfePagina
 
     public void DesenharCreditos()
     {
-        Gfx.DrawString("Impresso com DanfeSharp", RetanguloCreditos, Danfe.EstiloPadrao.CriarFonteItalico(6), AlinhamentoHorizontal.Direita);
+        Gfx.DrawString("DHL Group", RetanguloCreditos, Danfe.EstiloPadrao.CriarFonteItalico(6), AlinhamentoHorizontal.Direita);
     }
 
     private void DesenharCanhoto()
