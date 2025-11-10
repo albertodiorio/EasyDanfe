@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Zeus.Net.NFe.Danfe.PdfClown" Version="2025.10.31.2014" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,139 @@
+﻿using System.Text;
+
+namespace EasyDanfe.Models;
+
+public class EmpresaViewModel
+{
+    /// <summary>
+    /// <para>Razão Social ou Nome</para>
+    /// <para>Tag xNome</para>
+    /// </summary>
+    public string RazaoSocial { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Nome fantasia</para>
+    /// <para>Tag xFant</para>
+    /// </summary>
+    public string NomeFantasia { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Logradouro</para>
+    /// <para>Tag xLgr</para>
+    /// </summary>
+    public string EnderecoLogadrouro { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Complemento</para>
+    /// <para>Tag xCpl</para>
+    /// </summary>
+    public string EnderecoComplemento { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Número</para>
+    /// <para>Tag nro</para>
+    /// </summary>
+    public string EnderecoNumero { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Código do CEP</para>
+    /// <para>Tag CEP</para>
+    /// </summary>
+    public string EnderecoCep { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Bairro</para>
+    /// <para>Tag xBairro</para>
+    /// </summary>
+    public string EnderecoBairro { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Sigla da UF</para>
+    /// <para>Tag UF</para>
+    /// </summary>
+    public string EnderecoUf { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Nome do município</para>
+    /// <para>Tag xMun</para>
+    /// </summary>
+    public string Municipio { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Telefone</para>
+    /// <para>Tag fone</para>
+    /// </summary>
+    public string Telefone { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>CNPJ ou CPF</para>
+    /// <para>Tag CNPJ ou CPF</para>
+    /// </summary>
+    public string CnpjCpf { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Inscrição Estadual</para>
+    /// <para>Tag IE</para>
+    /// </summary>
+    public string Ie { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>IE do Substituto Tributário</para>
+    /// <para>Tag IEST</para>
+    /// </summary>
+    public string IeSt { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Inscrição Municipal</para>
+    /// <para>Tag IM</para>
+    /// </summary>
+    public string IM { get; set; } = string.Empty;
+
+    /// <summary>
+    /// <para>Email</para>
+    /// <para>Tag email</para>
+    /// </summary>
+    public string Email { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Código de Regime Tributário
+    /// </summary>
+    public string CRT { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Linha 1 do Endereço
+    /// </summary>
+    public string EnderecoLinha1
+    {
+        get
+        {
+            var sb = new StringBuilder();
+            sb.Append(EnderecoLogadrouro);
+            if (!string.IsNullOrWhiteSpace(EnderecoNumero)) sb.Append(", ").Append(EnderecoNumero);
+            if (!string.IsNullOrWhiteSpace(EnderecoComplemento)) sb.Append(" - ").Append(EnderecoComplemento);
+            return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Linha 1 do Endereço
+    /// </summary>
+    public string EnderecoLinha2 => $"{EnderecoBairro} - CEP: {Utils.Formatador.FormatarCEP(EnderecoCep)}";
+
+
+    /// <summary>
+    /// Linha 3 do Endereço
+    /// </summary>
+    public string EnderecoLinha3
+    {
+        get
+        {
+            var sb = new StringBuilder()
+                .Append(Municipio).Append(" - ").Append(EnderecoUf);
+
+            if (!string.IsNullOrWhiteSpace(Telefone))
+                sb.Append(" Fone: ").Append(Utils.Formatador.FormatarTelefone(Telefone));
+
+            return sb.ToString();
+        }
+    }
+}

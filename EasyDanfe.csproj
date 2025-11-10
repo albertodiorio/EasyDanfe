@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Graphics\" />
+    <Folder Include="Models\" />
+    <Folder Include="Structs\" />
+    <Folder Include="Schemes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Zeus.Net.NFe.Danfe.PdfClown" />
+  </ItemGroup>
+
+</Project>

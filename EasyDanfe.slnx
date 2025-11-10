@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="../EasyDanfeConsole/EasyDanfeConsole.csproj" />
+  <Project Path="EasyDanfe.csproj" />
+</Solution>
