@@ -1,5 +1,6 @@
 ﻿using EasyDanfe.Enums;
 using EasyDanfe.Schemes;
+using NFe.Danfe.PdfClown.Tools;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -234,16 +235,18 @@ public static class DanfeViewModelCreator
 
         foreach (var det in infNfe.det)
         {
-            ProdutoViewModel produto = new ProdutoViewModel();
-            produto.Codigo = det.prod.cProd;
-            produto.Descricao = det.prod.xProd;
-            produto.Ncm = det.prod.NCM;
-            produto.Cfop = det.prod.CFOP;
-            produto.Unidade = det.prod.uCom;
-            produto.Quantidade = det.prod.qCom;
-            produto.ValorUnitario = det.prod.vUnCom;
-            produto.ValorTotal = det.prod.vProd;
-            produto.InformacoesAdicionais = det.infAdProd;
+            ProdutoViewModel produto = new ProdutoViewModel
+            {
+                Codigo = det.prod.cProd,
+                Descricao = MontarDescricaoComImpostos(det),
+                Ncm = det.prod.NCM,
+                Cfop = det.prod.CFOP,
+                Unidade = det.prod.uCom,
+                Quantidade = det.prod.qCom,
+                ValorUnitario = det.prod.vUnCom,
+                ValorTotal = det.prod.vProd,
+                InformacoesAdicionais = det.infAdProd
+            };
 
             var imposto = det.imposto;
 
@@ -259,6 +262,10 @@ public static class DanfeViewModelCreator
                         produto.BaseIcms = icms.vBC;
                         produto.AliquotaIcms = icms.pICMS;
                         produto.OCst = icms.orig + icms.CST + icms.CSOSN;
+                        produto.PercentualIcmsSt = icms.pICMSST;
+                        produto.ValorBaseCalculoSt = icms.vBCST;
+                        produto.ValorVastIva = icms.pMVAST;
+                        produto.ValorIcmsST = icms.vBCST;
                     }
                 }
 
@@ -365,6 +372,18 @@ public static class DanfeViewModelCreator
         }
 
         return model;
+    }
+
+    private static string MontarDescricaoComImpostos(Detalhe det)
+    {
+        var descricao = new StringBuilder();
+        descricao.AppendLine(det.prod.xProd);
+        descricao.Append($"IVA/MA: {det.imposto.ICMS.ICMS.pMVAST.Formatar()}% ");
+        descricao.Append($"{nameof(det.imposto.ICMS.ICMS.pICMSST)}: {det.imposto.ICMS.ICMS.pICMSST.Formatar()}% ");
+        descricao.Append($"{nameof(det.imposto.ICMS.ICMS.vBCST)}: {det.imposto.ICMS.ICMS.vBCST.Formatar()}% ");
+        descricao.Append($"{nameof(det.imposto.ICMS.ICMS.vICMSST)}: {det.imposto.ICMS.ICMS.vICMSST.Formatar()}% ");
+
+        return descricao.ToString();
     }
 
     private static LocalEntregaRetiradaViewModel CreateLocalRetiradaEntrega(LocalEntregaRetirada local)

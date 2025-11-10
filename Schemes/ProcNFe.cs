@@ -239,6 +239,10 @@ public class ImpostoICMS
     public double vBC { get; set; }
     public double pICMS { get; set; }
     public double vICMS { get; set; }
+    public double pMVAST { get; set; }
+    public double pICMSST { get; set; }
+    public double vBCST { get; set; }
+    public double vICMSST { get; set; }
 }
 
 public class ImpostoICMS00 : ImpostoICMS { }

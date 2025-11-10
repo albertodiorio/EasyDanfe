@@ -67,7 +67,7 @@ internal class ModuleProdutosServicos : ElementBase
 
         foreach (var p in ViewModel.Produtos)
         {
-            var linha = new List<String>
+            var linha = new List<string>
                 {
                     p.Codigo,
                     p.DescricaoCompleta,

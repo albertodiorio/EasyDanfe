@@ -99,6 +99,30 @@ public class ProdutoViewModel
     /// </summary>
     public double? ValorAproximadoTributos { get; set; }
 
+    /// <summary>
+    /// <para>Percentual ICMS ST</para>
+    /// <para>Tag pICMSST</para>
+    /// </summary>
+    public double PercentualIcmsSt { get; set; }
+
+    /// <summary>
+    /// <para>Valor Base Cálculo ST</para>
+    /// <para>Tag vBCST</para>
+    /// </summary>
+    public double ValorBaseCalculoSt { get; set; }
+
+    /// <summary>
+    /// <para>Valor VAST IV</para>
+    /// <para>Tag pMVAST</para>
+    /// </summary>
+    public double ValorVastIva { get; set; }
+
+    /// <summary>
+    /// <para>Valor ICMS ST</para>
+    /// <para>Tag vICMSST</para>
+    /// </summary>
+    public double ValorIcmsST { get; set; }
+
     public ProdutoViewModel()
     {
         AliquotaIpi = null;
