@@ -207,9 +207,7 @@ public static class DanfeModelCreator
             ValorPis = total.ICMSTot.VPIS,
             ValorCofins = total.ICMSTot.VCOFINS,
             ValorIcmsSt = total.ICMSTot.VST,
-            BaseCalculoIcmsSt = total.ICMSTot.VBCST,
-            VIcmsUfDest = total.ICMSTot.VICM
-            VIcmsUfRemet =
+            BaseCalculoIcmsSt = total.ICMSTot.VBCST
 
         };
     }
