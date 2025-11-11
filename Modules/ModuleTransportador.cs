@@ -14,7 +14,7 @@ internal class ModuleTransportador : ModuleBase
     public const float LarguraCampoUf = 7F * Proporcao;
     public const float LarguraFrete = 34F * Proporcao;
 
-    public ModuleTransportador(DanfeViewModel viewModel, EstiloElement campoEstilo) : base(viewModel, campoEstilo)
+    public ModuleTransportador(DanfeModel viewModel, EstiloElement campoEstilo) : base(viewModel, campoEstilo)
     {
         var transportadora = viewModel.Transportadora;
 
@@ -24,7 +24,7 @@ internal class ModuleTransportador : ModuleBase
             .ComCampo("Código ANTT", transportadora.CodigoAntt, AlinhamentoHorizontal.Centro)
             .ComCampo("Placa do Veículo", transportadora.Placa, AlinhamentoHorizontal.Centro)
             .ComCampo(Strings.UF, transportadora.VeiculoUf, AlinhamentoHorizontal.Centro)
-            .ComCampo(Strings.CnpjCpf, Formatador.FormatarCnpj(transportadora.CnpjCpf), AlinhamentoHorizontal.Centro)
+            .ComCampo(Strings.CnpjCpf, Formatter.FormatarCnpj(transportadora.CnpjCpf), AlinhamentoHorizontal.Centro)
             .ComLarguras(0, LarguraFrete, LarguraCampoCodigoAntt, LarguraCampoPlacaVeiculo, LarguraCampoUf, LarguraCampoCnpj);
 
         AdicionarLinhaCampos()

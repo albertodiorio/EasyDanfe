@@ -13,7 +13,7 @@ using File = org.pdfclown.files.File;
 
 public sealed class Danfe : IDisposable
 {
-    public DanfeViewModel ViewModel { get; }
+    public DanfeModel ViewModel { get; }
     public File File { get; }
     internal Document PdfDocument { get; }
 
@@ -31,7 +31,7 @@ public sealed class Danfe : IDisposable
     private org.pdfclown.documents.contents.xObjects.XObject? logoObject;
     private bool foiGerado;
 
-    public Danfe(DanfeViewModel viewModel)
+    public Danfe(DanfeModel viewModel)
     {
         ArgumentNullException.ThrowIfNull(viewModel);
         ViewModel = viewModel;

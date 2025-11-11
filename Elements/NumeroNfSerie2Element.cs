@@ -7,10 +7,10 @@ using System.Drawing;
 
 namespace EasyDanfe.Elements;
 
-class NumeroNfSerie2Element(EstiloElement estilo, DanfeViewModel viewModel) : ElementBase(estilo)
+class NumeroNfSerie2Element(EstiloElement estilo, DanfeModel viewModel) : ElementBase(estilo)
 {
     public RectangleF RetanguloNumeroFolhas { get; private set; }
-    public DanfeViewModel ViewModel { get; private set; } = viewModel;
+    public DanfeModel ViewModel { get; private set; } = viewModel;
 
     public override void Draw(Gfx gfx)
     {
@@ -70,7 +70,7 @@ class NumeroNfSerie2Element(EstiloElement estilo, DanfeViewModel viewModel) : El
             AlinhamentoVertical = AlinhamentoVertical.Topo,
             AlinhamentoHorizontal = AlinhamentoHorizontal.Centro
         }
-        .AddLine("Nº.: " + ViewModel.NfNumero.ToString(Utils.Formatador.FormatoNumeroNF), f4)
+        .AddLine("Nº.: " + ViewModel.NfNumero.ToString(Utils.Formatter.FormatoNumeroNF), f4)
         .AddLine($"Série: {ViewModel.NfSerie}", f4);
 
         ts.Draw(gfx);

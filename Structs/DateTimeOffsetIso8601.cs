@@ -10,14 +10,9 @@ namespace EasyDanfe.Structs;
 /// type and has the same hash code as <c>DateTimeOffset</c>! Implicit
 /// assignment from <c>DateTime</c> is neither implemented nor desirable!
 /// </remarks>
-public struct DateTimeOffsetIso8601 : IXmlSerializable
+public struct DateTimeOffsetIso8601(DateTimeOffset value) : IXmlSerializable
 {
-    public DateTimeOffset DateTimeOffsetValue { private set; get; }
-
-    public DateTimeOffsetIso8601(DateTimeOffset value)
-    {
-        this.DateTimeOffsetValue = value;
-    }
+    public DateTimeOffset DateTimeOffsetValue { private set; get; } = value;
 
     public static implicit operator DateTimeOffsetIso8601(DateTimeOffset value)
     {
@@ -82,12 +77,12 @@ public struct DateTimeOffsetIso8601 : IXmlSerializable
         return DateTimeOffsetValue.ToString(format: "o");
     }
 
-    public string ToString(string format)
+    public readonly string ToString(string format)
     {
         return DateTimeOffsetValue.ToString(format);
     }
 
-    public void WriteXml(XmlWriter writer)
+    public readonly void WriteXml(XmlWriter writer)
     {
         writer.WriteString(DateTimeOffsetValue.ToString(format: "o"));
     }

@@ -9,10 +9,10 @@ internal class ModuleCanhoto : ModuleBase
     public const float TextoRecebimentoAltura = 10;
     public const float AlturaLinha2 = 9;
 
-    public ModuleCanhoto(DanfeViewModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public ModuleCanhoto(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
     {
         var textoRecebimento = new TextoSimplesElement(estilo, viewModel.TextoRecebimento) { Height = TextoRecebimentoAltura, TamanhoFonte = 8 };
-        var nfe = new NumeroNfSerieElement(estilo, viewModel.NfNumero.ToString(Utils.Formatador.FormatoNumeroNF), viewModel.NfSerie.ToString()) { Height = AlturaLinha2 + TextoRecebimentoAltura, Width = 30 };
+        var nfe = new NumeroNfSerieElement(estilo, viewModel.NfNumero.ToString(Utils.Formatter.FormatoNumeroNF), viewModel.NfSerie.ToString()) { Height = AlturaLinha2 + TextoRecebimentoAltura, Width = 30 };
 
         var campos = new LinhaCamposElement(Estilo) { Height = AlturaLinha2 }
            .ComCampo("Data de Recebimento", null)

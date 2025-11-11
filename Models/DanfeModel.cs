@@ -1,7 +1,7 @@
 ﻿using EasyDanfe.Enums;
 using EasyDanfe.Extensions;
-using EasyDanfe.Schemes;
-using NFe.Danfe.PdfClown.Tools;
+using EasyDanfe.Utils;
+using NFe.Danfe.PdfClown.Esquemas;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,7 +10,7 @@ namespace EasyDanfe.Models;
 /// <summary>
 /// Modelo de dados utilizado para o DANFE.
 /// </summary>
-public class DanfeViewModel
+public class DanfeModel
 {
     private int _QuantidadeCanhoto;
 
@@ -56,7 +56,7 @@ public class DanfeViewModel
     /// <para>Série do Documento Fiscal</para>
     /// <para>Tag serie</para>
     /// </summary>
-    public int NfSerie { get; set; }
+    public string NfSerie { get; set; }
 
     public Orientacao Orientacao { get; set; }
 
@@ -105,12 +105,12 @@ public class DanfeViewModel
     /// <summary>
     /// Dados do Emitente
     /// </summary>
-    public EmpresaViewModel Emitente { get; set; }
+    public EmpresaModel Emitente { get; set; }
 
     /// <summary>
     /// Dados do Destinatário
     /// </summary>
-    public EmpresaViewModel Destinatario { get; set; }
+    public EmpresaModel Destinatario { get; set; }
 
     /// <summary>
     /// <para>Tipo de Operação - 0-entrada / 1-saída</para>
@@ -131,27 +131,27 @@ public class DanfeViewModel
     /// <summary>
     /// Faturas da Nota Fiscal
     /// </summary>
-    public List<DuplicataViewModel> Duplicatas { get; set; }
+    public List<DuplicataModel> Duplicatas { get; set; }
 
     /// <summary>
     /// Dados da Transportadora
     /// </summary>
-    public TransportadoraViewModel Transportadora { get; set; }
+    public TransportadoraModel Transportadora { get; set; }
 
     /// <summary>
     /// View Model do bloco Cálculo do Imposto
     /// </summary>
-    public CalculoImpostoViewModel CalculoImposto { get; set; }
+    public CalculoImpostoModel CalculoImposto { get; set; }
 
     /// <summary>
     /// Produtos da Nota Fiscal
     /// </summary>
-    public List<ProdutoViewModel> Produtos { get; set; }
+    public List<ProdutoModel> Produtos { get; set; }
 
     /// <summary>
     /// View Model do Bloco Cálculo do Issqn
     /// </summary>
-    public CalculoIssqnViewModel CalculoIssqn { get; set; }
+    public CalculoIssqnModel CalculoIssqn { get; set; }
 
     /// <summary>
     /// Tipo de Ambiente
@@ -173,9 +173,9 @@ public class DanfeViewModel
     /// </summary>
     public List<string> NotasFiscaisReferenciadas { get; set; }
 
-    public LocalEntregaRetiradaViewModel LocalRetirada { get; set; }
+    public LocalEntregaRetiradaModel LocalRetirada { get; set; }
 
-    public LocalEntregaRetiradaViewModel LocalEntrega { get; set; }
+    public LocalEntregaRetiradaModel LocalEntrega { get; set; }
 
     /// <summary>
     /// Tag xNEmp
@@ -221,39 +221,39 @@ public class DanfeViewModel
 
     public string ContingenciaJustificativa { get; set; }
 
-    public DanfeViewModel()
+    public DanfeModel()
     {
         QuantidadeCanhotos = 1;
         Margem = 4;
         Orientacao = Orientacao.Retrato;
-        CalculoImposto = new CalculoImpostoViewModel();
-        Emitente = new EmpresaViewModel();
-        Destinatario = new EmpresaViewModel();
+        CalculoImposto = new CalculoImpostoModel();
+        Emitente = new EmpresaModel();
+        Destinatario = new EmpresaModel();
         Duplicatas = [];
         Produtos = [];
-        Transportadora = new TransportadoraViewModel();
-        CalculoIssqn = new CalculoIssqnViewModel();
+        Transportadora = new TransportadoraModel();
+        CalculoIssqn = new CalculoIssqnModel();
         NotasFiscaisReferenciadas = [];
     }
 
 
     public bool MostrarCalculoIssqn { get; set; }
 
-    public static DanfeViewModel CreateFromXmlFile(String path)
+    public static DanfeModel CreateFromXmlFile(string path)
     {
-        return DanfeViewModelCreator.CriarDeArquivoXml(path);
+        return DanfeModelCreator.CriarDeArquivoXml(path);
     }
 
-    public static DanfeViewModel CreateFromXmlString(String xml)
+    public static DanfeModel CreateFromXmlString(string xml)
     {
-        return DanfeViewModelCreator.CreateFromXmlString(xml);
+        return DanfeModelCreator.CreateFromXmlString(xml);
     }
 
     public virtual string TextoRecebimento
     {
         get
         {
-            return $"Recebemos de {Emitente.RazaoSocial} os produtos e/ou serviços constantes na Nota Fiscal Eletrônica indicada {(Orientacao == Orientacao.Retrato ? "abaixo" : "ao lado")}. Emissão: {DataHoraEmissao.Formatar()} Valor Total: R$ {CalculoImposto.ValorTotalNota.Formatar()} Destinatário: {Destinatario.RazaoSocial}";
+            return $"Recebemos de {Emitente.RazaoSocial} os produtos e/ou serviços constantes na Nota Fiscal Eletrônica indicada {(Orientacao == Orientacao.Retrato ? "abaixo" : "ao lado")}. Emissão: {DataHoraEmissao.FormatarDataHora()} Valor Total: R$ {CalculoImposto.ValorTotalNota.Formatar()} Destinatário: {Destinatario.RazaoSocial}";
         }
     }
 
@@ -321,7 +321,7 @@ public class DanfeViewModel
             sb.Append(nfref);
         }
 
-        if (CalculoImposto.ValorAproximadoTributos.HasValue && (String.IsNullOrEmpty(InformacoesComplementares) ||
+        if (CalculoImposto.ValorAproximadoTributos.HasValue && (string.IsNullOrEmpty(InformacoesComplementares) ||
            !Regex.IsMatch(InformacoesComplementares, @"((valor|vlr?\.?)\s+(aprox\.?|aproximado)\s+(dos\s+)?(trib\.?|tributos))|((trib\.?|tributos)\s+(aprox\.?|aproximado))", RegexOptions.IgnoreCase)))
         {
             if (sb.Length > 0) sb.Append("\r\n");

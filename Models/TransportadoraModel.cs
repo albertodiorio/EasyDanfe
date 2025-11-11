@@ -1,6 +1,6 @@
 ﻿namespace EasyDanfe.Models;
 
-public class TransportadoraViewModel : EmpresaViewModel
+public class TransportadoraModel : EmpresaModel
 {
     public static readonly Dictionary<int, string> ModalidadesFrete = new()
     {
@@ -40,7 +40,7 @@ public class TransportadoraViewModel : EmpresaViewModel
     /// <para>Quantidade de volumes transportados.</para>
     /// <para>Tag qVol</para>
     /// </summary>
-    public Double? QuantidadeVolumes { get; set; }
+    public decimal? QuantidadeVolumes { get; set; }
 
     /// <summary>
     /// <para>Espécie dos volumes transportados.</para>
@@ -64,13 +64,13 @@ public class TransportadoraViewModel : EmpresaViewModel
     /// <para>Peso Líquido (em kg).</para>
     /// <para>Tag pesoL</para>
     /// </summary>
-    public double? PesoLiquido { get; set; }
+    public decimal? PesoLiquido { get; set; }
 
     /// <summary>
     /// <para>Peso Bruto (em kg).</para>
     /// <para>Tag pesoB</para>
     /// </summary>
-    public double? PesoBruto { get; set; }
+    public decimal? PesoBruto { get; set; }
 
     public string ModalidadeFreteString
     {

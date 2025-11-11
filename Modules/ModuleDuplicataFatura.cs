@@ -7,7 +7,7 @@ namespace EasyDanfe.Modules;
 internal class BlocoDuplicataFatura : ModuleBase
 {
 
-    public BlocoDuplicataFatura(DanfeViewModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public BlocoDuplicataFatura(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
     {
         var de = viewModel.Duplicatas.Select(x => new DuplicataElement(estilo, x)).ToList();
         var eh = de.First().Height;

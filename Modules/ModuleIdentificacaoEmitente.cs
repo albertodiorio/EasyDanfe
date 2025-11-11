@@ -16,7 +16,7 @@ internal class ModuleIdentificacaoEmitente : ModuleBase
     private readonly NumeroNfSerie2Element ifdNfe;
     private readonly IdentificacaoEmitenteElement idEmitente;
 
-    public ModuleIdentificacaoEmitente(DanfeViewModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public ModuleIdentificacaoEmitente(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
     {
 
         var textoConsulta = new TextoSimplesElement(Estilo, Strings.TextoConsulta)
@@ -52,6 +52,7 @@ internal class ModuleIdentificacaoEmitente : ModuleBase
         AdicionarLinhaCampos()
             .ComCampo("Inscrição Estadual", ViewModel.Emitente.Ie, AlinhamentoHorizontal.Centro)
             .ComCampo("Inscrição Estadual do Subst. Tributário", ViewModel.Emitente.IeSt, AlinhamentoHorizontal.Centro)
+            .ComCampo("Inscrição Municipal", ViewModel.Emitente.IM, AlinhamentoHorizontal.Centro)
             .ComCampo("Cnpj", Formatador.FormatarCnpj(ViewModel.Emitente.CnpjCpf), AlinhamentoHorizontal.Centro)
             .ComLargurasIguais();
 
@@ -65,6 +66,5 @@ internal class ModuleIdentificacaoEmitente : ModuleBase
 
     public override PosicaoBloco Posicao => PosicaoBloco.Topo;
     public override bool VisivelSomentePrimeiraPagina => false;
-
     public RectangleF RetanguloNumeroFolhas => ifdNfe.RetanguloNumeroFolhas;
 }

@@ -8,9 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Graphics\" />
-    <Folder Include="Models\" />
     <Folder Include="Structs\" />
-    <Folder Include="Schemes\" />
   </ItemGroup>
 
   <ItemGroup>

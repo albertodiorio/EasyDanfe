@@ -3,7 +3,7 @@ using EasyDanfe.Enums;
 using EasyDanfe.Extensions;
 using EasyDanfe.Graphics;
 using EasyDanfe.Models;
-using NFe.Danfe.PdfClown.Tools;
+using EasyDanfe.Utils;
 using System.Drawing;
 
 namespace EasyDanfe.Modules;
@@ -12,9 +12,9 @@ internal class ModuleProdutosServicos : ElementBase
 {
     public CabecalhoBlocoElement CabecalhoBloco { get; private set; }
     public TabelaElement Tabela { get; private set; }
-    public DanfeViewModel ViewModel { get; private set; }
+    public DanfeModel ViewModel { get; private set; }
 
-    public ModuleProdutosServicos(DanfeViewModel viewModel, EstiloElement estilo) : base(estilo)
+    public ModuleProdutosServicos(DanfeModel viewModel, EstiloElement estilo) : base(estilo)
     {
         ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         CabecalhoBloco = new CabecalhoBlocoElement(estilo, "DADOS DOS PRODUTOS / SERVIÇOS");

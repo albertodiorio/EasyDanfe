@@ -27,7 +27,7 @@ internal class LinhaCamposElement : FlexibleLineElement
         return this;
     }
 
-    public virtual LinhaCamposElement ComCampoNumerico(string cabecalho, double? conteudoNumerico, int casasDecimais = 2)
+    public virtual LinhaCamposElement ComCampoNumerico(string cabecalho, decimal? conteudoNumerico, int casasDecimais = 2)
     {
         var campo = new CampoNumericoElement(cabecalho, conteudoNumerico, Estilo, casasDecimais);
         Elementos.Add(campo);

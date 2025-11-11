@@ -1,6 +1,6 @@
 ﻿namespace EasyDanfe.Models;
 
-public class LocalEntregaRetiradaViewModel
+public class LocalEntregaRetiradaModel
 {
     public string NomeRazaoSocial { get; set; } = string.Empty;
     public string CnpjCpf { get; set; } = string.Empty;

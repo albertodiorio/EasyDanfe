@@ -1,6 +1,6 @@
 ﻿namespace EasyDanfe.Models;
 
-public class DuplicataViewModel
+public class DuplicataModel
 {
     /// <summary>
     /// <para>Número da Duplicata</para>
@@ -18,5 +18,5 @@ public class DuplicataViewModel
     /// <para>Valor da duplicata</para>
     /// <para>Tag vDup</para>
     /// </summary>
-    public double? Valor { get; set; }
+    public decimal? Valor { get; set; }
 }

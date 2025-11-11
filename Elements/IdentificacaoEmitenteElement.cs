@@ -9,10 +9,10 @@ namespace EasyDanfe.Elements;
 
 internal class IdentificacaoEmitenteElement : ElementBase
 {
-    public DanfeViewModel ViewModel { get; private set; }
+    public DanfeModel ViewModel { get; private set; }
     public XObject Logo { get; set; }
 
-    public IdentificacaoEmitenteElement(EstiloElement estilo, DanfeViewModel viewModel) : base(estilo)
+    public IdentificacaoEmitenteElement(EstiloElement estilo, DanfeModel viewModel) : base(estilo)
     {
         ViewModel = viewModel;
         Logo = null;

@@ -6,7 +6,7 @@ namespace EasyDanfe.Modules;
 
 internal class ModuleCalculoIssqn : ModuleBase
 {
-    public ModuleCalculoIssqn(DanfeViewModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public ModuleCalculoIssqn(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
     {
         var m = viewModel.CalculoIssqn;
 

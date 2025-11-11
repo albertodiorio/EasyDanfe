@@ -13,7 +13,7 @@ internal class ModuleDadosAdicionais : ModuleBase
     private readonly CampoElement _cReservadoFisco;
     public const float InfComplementaresLarguraPorcentagem = 75;
 
-    public ModuleDadosAdicionais(DanfeViewModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public ModuleDadosAdicionais(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
     {
         _cInfComplementares = new CampoMultilinhaElement("Informações Complementares", ViewModel.TextoAdicional(), estilo);
         _cReservadoFisco = new CampoMultilinhaElement("Reservado ao fisco", ViewModel.TextoAdicionalFisco(), estilo);

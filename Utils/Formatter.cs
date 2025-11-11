@@ -6,14 +6,14 @@ namespace EasyDanfe.Utils;
 /// <summary>
 /// Classe que ajuda na formatação de dados.
 /// </summary>
-public static class Formatador
+public static class Formatter
 {
     /// <summary>
     /// Cultura pt-BR
     /// </summary>
     public static readonly CultureInfo Cultura = new(1046);
 
-    static Formatador()
+    static Formatter()
     {
         Cultura.NumberFormat.CurrencyPositivePattern = 2;
         Cultura.NumberFormat.CurrencyNegativePattern = 9;
@@ -180,7 +180,7 @@ public static class Formatador
         return Regex.Replace(chaveAcesso, ".{4}", "$0 ").TrimEnd();
     }
 
-    public static string Formatar(this Double number, string formato = FormatoMoeda)
+    public static string Formatar(this decimal number, string formato = FormatoMoeda)
     {
         return number.ToString(formato, Cultura);
     }
@@ -195,28 +195,27 @@ public static class Formatador
         return number.HasValue ? number.Value.Formatar(formato) : string.Empty;
     }
 
-    public static string Formatar(this Double? number, string formato = FormatoMoeda)
+    public static string Formatar(this decimal? number, string formato = FormatoMoeda)
     {
         return number.HasValue ? number.Value.Formatar(formato) : string.Empty;
-    }
-
-    public static string FormatarMoeda(this Double? number)
-    {
-        return number.HasValue ? number.Value.ToString("C", Cultura) : string.Empty;
     }
 
     public static string Formatar(this DateTime? dateTime)
     {
         return dateTime.HasValue ? dateTime.Value.ToString("dd/MM/yyyy") : string.Empty;
     }
+    public static string Formatar(this TimeSpan? timeSpan)
+    {
+        return timeSpan.HasValue ? timeSpan.Value.ToString() : string.Empty;
+    }
+
+    public static string FormatarMoeda(this decimal? number)
+    {
+        return number.HasValue ? number.Value.ToString("C", Cultura) : string.Empty;
+    }
 
     public static string FormatarDataHora(this DateTime? dateTime)
     {
         return dateTime.HasValue ? dateTime.Value.ToString("dd/MM/yyyy hh:mm:ss") : string.Empty;
-    }
-
-    public static string Formatar(this TimeSpan? timeSpan)
-    {
-        return timeSpan.HasValue ? timeSpan.Value.ToString() : string.Empty;
     }
 }

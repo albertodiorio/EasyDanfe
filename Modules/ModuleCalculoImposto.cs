@@ -6,7 +6,7 @@ namespace EasyDanfe.Modules;
 
 class ModuleCalculoImposto : ModuleBase
 {
-    public ModuleCalculoImposto(DanfeViewModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public ModuleCalculoImposto(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
     {
         var m = ViewModel.CalculoImposto;
 
@@ -19,8 +19,8 @@ class ModuleCalculoImposto : ModuleBase
 
         if (ViewModel.ExibirIcmsInterestadual)
         {
-            l.ComCampoNumerico("V. ICMS UF REMET.", m.vICMSUFRemet)
-             .ComCampoNumerico("VALOR DO FCP", m.vFCPUFDest);
+            l.ComCampoNumerico("V. ICMS UF REMET.", m.VIcmsUfRemet)
+             .ComCampoNumerico("VALOR DO FCP", m.VFcpUfDest);
         }
 
         if (ViewModel.ExibirPisConfins)
@@ -34,13 +34,13 @@ class ModuleCalculoImposto : ModuleBase
         l = AdicionarLinhaCampos()
         .ComCampoNumerico("Valor do Frete", m.ValorFrete)
         .ComCampoNumerico("Valor do Seguro", m.ValorSeguro)
-        .ComCampoNumerico("Desconto", m.Desconto)
+        .ComCampoNumerico("Desconto", m.ValorDesconto)
         .ComCampoNumerico("Outras Despesas", m.OutrasDespesas)
         .ComCampoNumerico("Valor Ipi", m.ValorIpi);
 
         if (ViewModel.ExibirIcmsInterestadual)
         {
-            l.ComCampoNumerico("V. ICMS UF DEST.", m.vICMSUFDest)
+            l.ComCampoNumerico("V. ICMS UF DEST.", m.VIcmsUfDest)
             .ComCampoNumerico("V. TOT. TRIB.", m.ValorAproximadoTributos);
         }
 
