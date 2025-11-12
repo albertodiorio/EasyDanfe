@@ -1,36 +1,35 @@
 ﻿using EasyDanfe.Elements;
-using EasyDanfe.Enums;
 using EasyDanfe.Models;
+using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-internal class ModuleCanhoto : ModuleBase
+public class ModuleCanhoto(DanfeModel viewModel, EstiloElement estilo)
 {
-    public const float TextoRecebimentoAltura = 10;
-    public const float AlturaLinha2 = 9;
+    private readonly DanfeModel _viewModel = viewModel;
+    private readonly EstiloElement _estilo = estilo;
 
-    public ModuleCanhoto(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public void Compose(IContainer container)
     {
-        var textoRecebimento = new TextoSimplesElement(estilo, viewModel.TextoRecebimento) { Height = TextoRecebimentoAltura, TamanhoFonte = 8 };
-        var nfe = new NumeroNfSerieElement(estilo, viewModel.NfNumero.ToString(Utils.Formatter.FormatoNumeroNF), viewModel.NfSerie.ToString()) { Height = AlturaLinha2 + TextoRecebimentoAltura, Width = 30 };
-
-        var campos = new LinhaCamposElement(Estilo) { Height = AlturaLinha2 }
-           .ComCampo("Data de Recebimento", null)
-           .ComCampo("Identificação e assinatura do recebedor", null)
-           .ComLarguras(50, 0);
-
-        var coluna1 = new VerticalStackElement();
-        coluna1.Add(textoRecebimento, campos);
-
-        var linha = new FlexibleLineElement() { Height = coluna1.Height }
-        .ComElemento(coluna1)
-        .ComElemento(nfe)
-        .ComLarguras(0, 16);
-
-        MainVerticalStack.Add(linha, new LinhaTracejadaElement(2));
-
+        container.Column(column =>
+        {
+            column.Item().Text("RECEBEMOS OS PRODUTOS CONSTANTES DA NOTA FISCAL ELETRÔNICA ABAIXO:").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+            column.Item().Row(row =>
+            {
+                row.RelativeItem(3).Component(new CampoElement("Nº DA NOTA FISCAL", _viewModel.Numero, _estilo));
+                row.RelativeItem(3).Component(new CampoElement("SÉRIE", _viewModel.Serie, _estilo));
+                row.RelativeItem(4).Component(new CampoElement("DATA DE RECEBIMENTO", string.Empty, _estilo));
+                row.RelativeItem(4).Component(new CampoElement("IDENTIFICAÇÃO E ASSINATURA DO RECEBEDOR", string.Empty, _estilo));
+            });
+            column.Item().Row(row =>
+            {
+                row.RelativeItem(5).Component(new CampoElement("NOME/RAZÃO SOCIAL", _viewModel.Destinatario.RazaoSocial, _estilo));
+                row.RelativeItem(5).Component(new CampoElement("CNPJ/CPF", Formatter.FormatCnpjCpf(_viewModel.Destinatario.CnpjCpf), _estilo));
+            });
+            column.Item().Component(new LinhaTracejadaElement());
+            column.Spacing(5);
+        });
     }
-
-    public override PosicaoBloco Posicao => PosicaoBloco.Topo;
-
 }

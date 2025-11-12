@@ -1,48 +1,33 @@
-﻿using EasyDanfe.Graphics;
-using Pcf = org.pdfclown.documents.contents.fonts;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-/// <summary>
-/// Coleção de fontes e medidas a serem compartilhadas entre os elementos básicos.
-/// </summary>
-internal class EstiloElement
+public class EstiloElement(float tFonteCampoCabecalho = 4, float tFonteCampoConteudo = 5)
 {
-    public float PaddingSuperior { get; set; }
-    public float PaddingInferior { get; set; }
-    public float PaddingHorizontal { get; set; }
-    public float FonteTamanhoMinimo { get; set; }
+    public float TamanhoFonteCampoCabecalho { get; } = tFonteCampoCabecalho;
+    public float TamanhoFonteCampoConteudo { get; } = tFonteCampoConteudo;
+    public Color CorBorda { get; } = Colors.Grey.Lighten2;
+    public Color CorFundoCabecalho { get; } = Colors.Grey.Lighten3;
+    public float EspessuraBorda { get; } = 0.5f;
 
-    public Pcf.Font FonteInternaRegular { get; set; }
-    public Pcf.Font FonteInternaNegrito { get; set; }
-    public Pcf.Font FonteInternaItalico { get; set; }
+    public TextStyle CabecalhoStyle(TextStyle textStyle) => textStyle
+        .FontSize(TamanhoFonteCampoCabecalho)
+        .SemiBold()
+        .FontFamily(Fonts.Verdana);
 
-    public Fonte FonteCampoCabecalho { get; private set; }
-    public Fonte FonteCampoConteudo { get; private set; }
-    public Fonte FonteCampoConteudoNegrito { get; private set; }
-    public Fonte FonteBlocoCabecalho { get; private set; }
-    public Fonte FonteNumeroFolhas { get; private set; }
+    public TextStyle ConteudoStyle(TextStyle textStyle) => textStyle
+        .FontSize(TamanhoFonteCampoConteudo)
+        .FontFamily(Fonts.Verdana);
 
-    public EstiloElement(Pcf.Font fontRegular, Pcf.Font fontBold, Pcf.Font fontItalic, float tamanhoFonteCampoCabecalho = 6, float tamanhoFonteConteudo = 10)
-    {
-        PaddingHorizontal = 0.75F;
-        PaddingSuperior = 0.65F;
-        PaddingInferior = 0.3F;
+    public TextStyle ConteudoNegritoStyle(TextStyle textStyle) => textStyle
+        .FontSize(TamanhoFonteCampoConteudo)
+        .SemiBold()
+        .FontFamily(Fonts.Verdana);
 
-        FonteInternaRegular = fontRegular;
-        FonteInternaNegrito = fontBold;
-        FonteInternaItalico = fontItalic;
-
-        FonteCampoCabecalho = CriarFonteRegular(tamanhoFonteCampoCabecalho);
-        FonteCampoConteudo = CriarFonteRegular(tamanhoFonteConteudo);
-        FonteCampoConteudoNegrito = CriarFonteNegrito(tamanhoFonteConteudo);
-        FonteBlocoCabecalho = CriarFonteRegular(7);
-        FonteNumeroFolhas = CriarFonteNegrito(10F);
-        FonteTamanhoMinimo = 5.75F;
-    }
-
-    public Fonte CriarFonteRegular(float emSize) => new(FonteInternaRegular, emSize);
-    public Fonte CriarFonteNegrito(float emSize) => new(FonteInternaNegrito, emSize);
-    public Fonte CriarFonteItalico(float emSize) => new(FonteInternaItalico, emSize);
-
+    public TextStyle ConteudoItalicoStyle(TextStyle textStyle) => textStyle
+        .FontSize(TamanhoFonteCampoConteudo)
+        .Italic()
+        .FontFamily(Fonts.Verdana);
 }

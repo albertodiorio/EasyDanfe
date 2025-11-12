@@ -33,7 +33,7 @@ public class EmpresaModel
         }
     }
 
-    public string EnderecoLinha2 => $"{EnderecoBairro} - CEP: {Utils.Formatter.FormatarCEP(EnderecoCep)}";
+    public string EnderecoLinha2 => $"{EnderecoBairro} - CEP: {Utils.Formatter.FormatCep(EnderecoCep)}";
 
     public string EnderecoLinha3
     {
@@ -43,7 +43,7 @@ public class EmpresaModel
                 .Append(Municipio).Append(" - ").Append(EnderecoUf);
 
             if (!string.IsNullOrWhiteSpace(Telefone))
-                sb.Append(" Fone: ").Append(Utils.Formatter.FormatarTelefone(Telefone));
+                sb.Append(" Fone: ").Append(Utils.Formatter.FormatTelefone(Telefone));
 
             return sb.ToString();
         }

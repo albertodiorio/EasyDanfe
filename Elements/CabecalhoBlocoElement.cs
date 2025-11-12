@@ -1,23 +1,23 @@
-﻿using EasyDanfe.Enums;
-using EasyDanfe.Graphics;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-/// <summary>
-/// Cabeçalho do bloco, normalmente um texto em caixa alta.
-/// </summary>
-internal class CabecalhoBlocoElement(EstiloElement estilo, string cabecalho) : ElementBase(estilo)
+public class CabecalhoBlocoElement(string titulo, EstiloElement estilo) : IComponent
 {
-    public const float MargemSuperior = 0.8F;
-    public string Cabecalho { get; set; } = cabecalho;
+    private readonly string _titulo = titulo;
+    private readonly EstiloElement _estilo = estilo;
 
-    public override void Draw(Gfx gfx)
+    public void Compose(IContainer container)
     {
-        base.Draw(gfx);
-        gfx.DrawString(Cabecalho.ToUpper(), BoundingBox, Estilo.FonteBlocoCabecalho,
-            AlinhamentoHorizontal.Esquerda, AlinhamentoVertical.Base);
+        container
+            .Background(_estilo.CorFundoCabecalho)
+            .Border(1).BorderColor(_estilo.CorBorda)
+            .PaddingVertical(1)
+            .AlignCenter()
+            .Text(_titulo)
+            .Style(_estilo.CabecalhoStyle(TextStyle.Default))
+            .FontSize(_estilo.TamanhoFonteCampoCabecalho + 1)
+            .SemiBold();
     }
-
-    public override float Height { get => MargemSuperior + Estilo.FonteBlocoCabecalho.AlturaLinha; set => throw new NotSupportedException(); }
-    public override bool PossuiContono => false;
 }

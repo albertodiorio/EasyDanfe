@@ -1,42 +1,20 @@
-﻿using EasyDanfe.Enums;
-using EasyDanfe.Graphics;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-/// <summary>
-/// Campo multilinha.
-/// </summary>
-internal class CampoMultilinhaElement : CampoElement
+public class CampoMultilinhaElement(string cabecalho, string conteudo, EstiloElement estilo) : IComponent
 {
-    private readonly TextBlockElement _tbConteudo;
+    private readonly string _cabecalho = cabecalho;
+    private readonly string _conteudo = conteudo;
+    private readonly EstiloElement _estilo = estilo;
 
-    public CampoMultilinhaElement(string cabecalho, string conteudo, EstiloElement estilo, AlinhamentoHorizontal alinhamentoHorizontalConteudo = AlinhamentoHorizontal.Esquerda)
-          : base(cabecalho, conteudo, estilo, alinhamentoHorizontalConteudo)
+    public void Compose(IContainer container)
     {
-        _tbConteudo = new TextBlockElement(conteudo, estilo.FonteCampoConteudo);
-        IsConteudoNegrito = false;
-    }
-
-    protected override void DesenharConteudo(Gfx gfx)
-    {
-        if (!string.IsNullOrWhiteSpace(Conteudo))
+        container.Border(1).BorderColor(_estilo.CorBorda).Padding(1).Column(column =>
         {
-            _tbConteudo.SetPosition(RetanguloDesenhvael.X, RetanguloDesenhvael.Y + Estilo.FonteCampoCabecalho.AlturaLinha + Estilo.PaddingInferior);
-            _tbConteudo.Draw(gfx);
-        }
+            column.Item().Text(_cabecalho).Style(_estilo.CabecalhoStyle(TextStyle.Default));
+            column.Item().Text(_conteudo).Style(_estilo.ConteudoStyle(TextStyle.Default));
+        });
     }
-
-    public override float Height
-    {
-        get
-        {
-            return Math.Max(_tbConteudo.Height + Estilo.FonteCampoCabecalho.AlturaLinha + Estilo.PaddingSuperior + 2 * Estilo.PaddingInferior, base.Height);
-        }
-        set
-        {
-            base.Height = value;
-        }
-    }
-
-    public override float Width { get => base.Width; set { base.Width = value; _tbConteudo.Width = value - 2 * Estilo.PaddingHorizontal; } }
 }

@@ -5,9 +5,10 @@ public class ProdutoModel
     public string Codigo { get; set; }
     public string InformacoesAdicionais { get; set; }
     public string Descricao { get; set; }
+    public string DescricaoImpostos { get; set; }
     public string Ncm { get; set; }
     public string OCst { get; set; }
-    public int Cfop { get; set; }
+    public string Cfop { get; set; }
     public string Unidade { get; set; }
     public decimal Quantidade { get; set; }
     public decimal ValorUnitario { get; set; }

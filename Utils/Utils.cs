@@ -1,33 +1,91 @@
-﻿using System.Text.RegularExpressions;
+﻿namespace EasyDanfe.Utils;
 
-namespace EasyDanfe.Utils;
-
-internal static class Utils
+public static class Utils
 {
-    /// <summary>
-    /// Verifica se uma string contém outra string no formato chave: valor.
-    /// </summary>
-    public static bool StringContemChaveValor(string str, string chave, string valor)
+    public static string GetModalidadeFrete(string? value)
     {
-        if (string.IsNullOrWhiteSpace(chave)) throw new ArgumentException(nameof(chave));
-        if (string.IsNullOrWhiteSpace(str)) return false;
-
-        return Regex.IsMatch(str, $@"({chave}):?\s*{valor}", RegexOptions.IgnoreCase);
+        return value switch
+        {
+            "0" => "0 - Emitente",
+            "1" => "1 - Destinatário",
+            "2" => "2 - Terceiros",
+            "3" => "3 - Próprio (Remetente)",
+            "4" => "4 - Próprio (Destinatário)",
+            "9" => "9 - Sem Frete",
+            _ => string.Empty,
+        };
     }
 
-    public static string TipoDFeDeChaveAcesso(string chaveAcesso)
+    public static string GetTipoEmissao(string? value)
     {
-        if (string.IsNullOrWhiteSpace(chaveAcesso)) throw new ArgumentException(nameof(chaveAcesso));
-
-        if (chaveAcesso.Length == 44)
+        return value switch
         {
-            string f = chaveAcesso.Substring(20, 2);
+            "1" => "1 - Normal",
+            "2" => "2 - Contingência FS",
+            "3" => "3 - Contingência SCAN",
+            "4" => "4 - Contingência DPEC",
+            "5" => "5 - Contingência FSDA",
+            "6" => "6 - Contingência SVC-AN",
+            "7" => "7 - Contingência SVC-RS",
+            "9" => "9 - Contingência Off-line NFC-e",
+            _ => string.Empty,
+        };
+    }
 
-            if (f == "55") return "NF-e";
-            else if (f == "57") return "CT-e";
-            else if (f == "65") return "NFC-e";
-        }
+    public static string GetTipoAmbiente(string? value)
+    {
+        return value switch
+        {
+            "1" => "1 - Produção",
+            "2" => "2 - Homologação",
+            _ => string.Empty,
+        };
+    }
 
-        return "DF-e Desconhecido";
+    public static string GetFinalidadeEmissao(string? value)
+    {
+        return value switch
+        {
+            "1" => "1 - Normal",
+            "2" => "2 - Complementar",
+            "3" => "3 - Ajuste",
+            "4" => "4 - Devolução de Mercadoria",
+            _ => string.Empty,
+        };
+    }
+
+    public static string GetTipoOperacao(string? value)
+    {
+        return value switch
+        {
+            "0" => "0 - Entrada",
+            "1" => "1 - Saída",
+            _ => string.Empty,
+        };
+    }
+
+    public static string GetConsumidorFinal(string? value)
+    {
+        return value switch
+        {
+            "0" => "0 - Normal",
+            "1" => "1 - Consumidor Final",
+            _ => string.Empty,
+        };
+    }
+
+    public static string GetIndicadorPresenca(string? value)
+    {
+        return value switch
+        {
+            "0" => "0 - Não se aplica",
+            "1" => "1 - Operação presencial",
+            "2" => "2 - Operação não presencial, pela Internet",
+            "3" => "3 - Operação não presencial, Teleatendimento",
+            "4" => "4 - NFC-e em operação com entrega a domicílio",
+            "5" => "5 - Operação presencial, fora do estabelecimento",
+            "9" => "9 - Operação não presencial, outros",
+            _ => string.Empty,
+        };
     }
 }

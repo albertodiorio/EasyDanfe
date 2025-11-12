@@ -1,109 +1,89 @@
 ﻿using EasyDanfe.Elements;
-using EasyDanfe.Enums;
-using EasyDanfe.Extensions;
-using EasyDanfe.Graphics;
 using EasyDanfe.Models;
 using EasyDanfe.Utils;
-using System.Drawing;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-internal class ModuleProdutosServicos : ElementBase
+public class ModuleProdutosServicos(DanfeModel viewModel, EstiloElement estilo)
 {
-    public CabecalhoBlocoElement CabecalhoBloco { get; private set; }
-    public TabelaElement Tabela { get; private set; }
-    public DanfeModel ViewModel { get; private set; }
+    private readonly DanfeModel _viewModel = viewModel;
+    private readonly EstiloElement _estilo = estilo;
 
-    public ModuleProdutosServicos(DanfeModel viewModel, EstiloElement estilo) : base(estilo)
+    public void Compose(IContainer container)
     {
-        ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
-        CabecalhoBloco = new CabecalhoBlocoElement(estilo, "DADOS DOS PRODUTOS / SERVIÇOS");
-
-        var ad = AlinhamentoHorizontal.Direita;
-        var ac = AlinhamentoHorizontal.Centro;
-        var ae = AlinhamentoHorizontal.Esquerda;
-
-        Tabela = new TabelaElement(Estilo);
-        string cabecalho4 = ViewModel.Emitente.CRT == "3" ? "O/CST" : "O/CSOSN";
-
-        if (ViewModel.IsRetrato)
+        container.Column(column =>
         {
-            Tabela
-            .ComColuna(8.5f, ac, "CÓDIGO", "PRODUTO")
-            .ComColuna(0, ae, "DESCRIÇÃO DO PRODUTO / SERVIÇO")
-            .ComColuna(5.6F, ac, "NCM/SH")
-            .ComColuna(3.9F, ac, cabecalho4)
-            .ComColuna(3.5F, ac, "CFOP")
-            .ComColuna(3.25F, ac, "UN")
-            .ComColuna(6F, ad, "QUANTI.")
-            .ComColuna(6F, ad, "VALOR", "UNIT.")
-            .ComColuna(6F, ad, "VALOR", "TOTAL")
-            .ComColuna(6F, ad, "B CÁLC", "ICMS")
-            .ComColuna(5, ad, "VALOR", "ICMS")
-            .ComColuna(5, ad, "VALOR", "IPI")
-            .ComColuna(3.5F, ad, "ALIQ.", "ICMS")
-            .ComColuna(3.5F, ad, "ALIQ.", "IPI");
-        }
-        else
-        {
-            Tabela
-            .ComColuna(8.1f, ac, "CÓDIGO PRODUTO")
-            .ComColuna(0, ae, "DESCRIÇÃO DO PRODUTO / SERVIÇO")
-            .ComColuna(5.5F, ac, "NCM/SH")
-            .ComColuna(3.1F, ac, cabecalho4)
-            .ComColuna(3.1F, ac, "CFOP")
-            .ComColuna(3F, ac, "UN")
-            .ComColuna(5.25F, ad, "QUANTI.")
-            .ComColuna(5.6F, ad, "VALOR UNIT.")
-            .ComColuna(5.6F, ad, "VALOR TOTAL")
-            .ComColuna(5.6F, ad, "B CÁLC ICMS")
-            .ComColuna(5.6F, ad, "VALOR ICMS")
-            .ComColuna(5.6F, ad, "VALOR IPI")
-            .ComColuna(3F, ad, "ALIQ.", "ICMS")
-            .ComColuna(3F, ad, "ALIQ.", "IPI");
-        }
+            column.Item().Component(new CabecalhoBlocoElement("DADOS DOS PRODUTOS / SERVIÇOS", _estilo));
 
-        Tabela.AjustarLarguraColunas();
-
-        foreach (var p in ViewModel.Produtos)
-        {
-            var linha = new List<string>
+            column.Item().Table(table =>
+            {
+                table.ColumnsDefinition(columns =>
                 {
-                    p.Codigo,
-                    p.DescricaoCompleta,
-                    p.Ncm,
-                    p.OCst,
-                    p.Cfop.Formatar("N0"),
-                    p.Unidade,
-                    p.Quantidade.Formatar(),
-                    p.ValorUnitario.Formatar(),
-                    p.ValorTotal.Formatar(),
-                    p.BaseIcms.Formatar(),
-                    p.ValorIcms.Formatar(),
-                    p.ValorIpi.Formatar(),
-                    p.AliquotaIcms.Formatar(),
-                    p.AliquotaIpi.Formatar()
-                };
+                    columns.RelativeColumn(1);  // CÓDIGO PRODUTO
+                    columns.RelativeColumn(5);  // DESCRIÇÃO DO PRODUTO / SERVIÇO (longest)
+                    columns.RelativeColumn(1);  // NCM/SH
+                    columns.RelativeColumn(1);  // CST
+                    columns.RelativeColumn(1);  // CFOP
+                    columns.RelativeColumn(1);  // UNID.
+                    columns.RelativeColumn(1);  // QUANT.
+                    columns.RelativeColumn(1);  // V. UNIT.
+                    columns.RelativeColumn(1);  // V. TOTAL
+                    columns.RelativeColumn(1);  // BC ICMS
+                    columns.RelativeColumn(1);  // V. ICMS
+                    columns.RelativeColumn(1);  // V. IPI
+                    columns.RelativeColumn(1);  // ALIQ. ICMS
+                    columns.RelativeColumn(1);  // ALIQ. IPI
 
-            Tabela.AdicionarLinha(linha);
-        }
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Element(CabecalhoCell).Text("CÓDIGO PRODUTO").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("DESCRIÇÃO DO PRODUTO / SERVIÇO").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("NCM/SH").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("CST").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("CFOP").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("UNID.").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("QUANT.").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("V. UNIT.").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("V. TOTAL").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("BC ICMS").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("V. ICMS").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("V. IPI").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("ALIQ. ICMS").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                    header.Cell().Element(CabecalhoCell).Text("ALIQ. IPI").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                });
+
+                foreach (var produto in _viewModel.Produtos)
+                {
+                    table.Cell().Element(ContentCell).Text(produto.Codigo).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).Column(col =>
+                    {
+                        col.Item().Text(produto.Descricao).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                        if (!string.IsNullOrWhiteSpace(produto.DescricaoImpostos))
+                        {
+                            col.Item().Text(produto.DescricaoImpostos).Style(_estilo.ConteudoStyle(TextStyle.Default).FontSize(_estilo.TamanhoFonteCampoConteudo - 1));
+                        }
+                    });
+                    table.Cell().Element(ContentCell).Text(produto.Ncm).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).Text(produto.OCst).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).Text(produto.Cfop).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).Text(produto.Unidade).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.Quantidade)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.ValorUnitario)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.ValorTotal)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.BaseIcms)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.ValorIcms)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.ValorIpi)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.AliquotaIcms)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                    table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(produto.AliquotaIpi)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                }
+            });
+        });
     }
 
-    public override void Draw(Gfx gfx)
-    {
-        base.Draw(gfx);
-
-        Tabela.SetPosition(RetanguloTabela.Location);
-        Tabela.SetSize(RetanguloTabela.Size);
-        Tabela.Draw(gfx);
-
-        CabecalhoBloco.SetPosition(X, Y);
-        CabecalhoBloco.Width = Width;
-        CabecalhoBloco.Draw(gfx);
-    }
-
-
-    public RectangleF RetanguloTabela => BoundingBox.CutTop(CabecalhoBloco.Height);
-    public bool CompletamenteDesenhada => Tabela.LinhaAtual == ViewModel.Produtos.Count;
-    public override bool PossuiContono => false;
+    private IContainer CabecalhoCell(IContainer container) => container.Background(_estilo.CorFundoCabecalho).Padding(0.1f).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda);
+    private IContainer ContentCell(IContainer container) => container.Padding(0.1f).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda);
 }

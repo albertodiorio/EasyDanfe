@@ -1,58 +1,37 @@
 ﻿using EasyDanfe.Elements;
-using EasyDanfe.Enums;
 using EasyDanfe.Models;
+using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-class ModuleCalculoImposto : ModuleBase
+public class ModuleCalculoImposto(DanfeModel viewModel, EstiloElement estilo)
 {
-    public ModuleCalculoImposto(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public void Compose(IContainer container)
     {
-        var m = ViewModel.CalculoImposto;
-
-        var l = AdicionarLinhaCampos()
-        .ComCampoNumerico("BASE DE CÁLC. DO ICMS", m.BaseCalculoIcms)
-        .ComCampoNumerico("VALOR DO ICMS", m.ValorIcms)
-        .ComCampoNumerico("BASE DE CÁLC. ICMS S.T.", m.BaseCalculoIcmsSt)
-        .ComCampoNumerico("VALOR DO ICMS SUBST.", m.ValorIcmsSt)
-        .ComCampoNumerico("V. IMP. IMPORTAÇÃO", m.ValorII);
-
-        if (ViewModel.ExibirIcmsInterestadual)
+        container.Column(column =>
         {
-            l.ComCampoNumerico("V. ICMS UF REMET.", m.VIcmsUfRemet)
-             .ComCampoNumerico("VALOR DO FCP", m.VFcpUfDest);
-        }
+            column.Item().Component(new CabecalhoBlocoElement("CÁLCULO DO IMPOSTO", estilo));
 
-        if (ViewModel.ExibirPisConfins)
-        {
-            l.ComCampoNumerico("VALOR DO PIS", m.ValorPis);
-        }
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(2).Component(new CampoNumericoElement("BASE DE CÁLCULO DO ICMS", Formatter.Format(viewModel.CalculoImposto.BaseCalculoIcms), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR DO ICMS", Formatter.Format(viewModel.CalculoImposto.ValorIcms), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("BASE DE CÁLCULO ICMS ST", Formatter.Format(viewModel.CalculoImposto.BaseCalculoIcmsSt), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR DO ICMS ST", Formatter.Format(viewModel.CalculoImposto.ValorIcmsSt), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR TOTAL DOS PRODUTOS", Formatter.Format(viewModel.CalculoImposto.ValorTotalProdutos), estilo));
+            }));
 
-        l.ComCampoNumerico("V. TOTAL PRODUTOS", m.ValorTotalProdutos)
-       .ComLargurasIguais();
-
-        l = AdicionarLinhaCampos()
-        .ComCampoNumerico("Valor do Frete", m.ValorFrete)
-        .ComCampoNumerico("Valor do Seguro", m.ValorSeguro)
-        .ComCampoNumerico("Desconto", m.ValorDesconto)
-        .ComCampoNumerico("Outras Despesas", m.OutrasDespesas)
-        .ComCampoNumerico("Valor Ipi", m.ValorIpi);
-
-        if (ViewModel.ExibirIcmsInterestadual)
-        {
-            l.ComCampoNumerico("V. ICMS UF DEST.", m.VIcmsUfDest)
-            .ComCampoNumerico("V. TOT. TRIB.", m.ValorAproximadoTributos);
-        }
-
-        if (ViewModel.ExibirPisConfins)
-        {
-            l.ComCampoNumerico("VALOR DO COFINS", m.ValorCofins);
-        }
-
-        l.ComCampoNumerico("Valor Total da Nota", m.ValorTotalNota)
-        .ComLargurasIguais();
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR DO FRETE", Formatter.Format(viewModel.CalculoImposto.ValorFrete), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR DO SEGURO", Formatter.Format(viewModel.CalculoImposto.ValorSeguro), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR DO DESCONTO", Formatter.Format(viewModel.CalculoImposto.ValorDesconto), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("OUTRAS DESPESAS ACESSÓRIAS", Formatter.Format(viewModel.CalculoImposto.OutrasDespesas), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR TOTAL DO IPI", Formatter.Format(viewModel.CalculoImposto.ValorIpi), estilo));
+                row.RelativeItem(2).Component(new CampoNumericoElement("VALOR TOTAL DA NOTA", Formatter.Format(viewModel.CalculoImposto.ValorTotalNota), estilo));
+            }));
+        });
     }
-
-    public override PosicaoBloco Posicao => PosicaoBloco.Topo;
-    public override string Cabecalho => "Cálculo do Imposto";
 }

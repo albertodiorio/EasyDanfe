@@ -1,41 +1,42 @@
-﻿using EasyDanfe.Attributtes;
-using EasyDanfe.Enums;
-using EasyDanfe.Extensions;
-using EasyDanfe.Graphics;
-using EasyDanfe.Models;
+﻿using EasyDanfe.Models;
 using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-[AlturaFixa]
-internal class DuplicataElement(EstiloElement estilo, DuplicataModel viewModel) : ElementBase(estilo)
+public class DuplicataElement(List<DuplicataModel> duplicatas, EstiloElement estilo) : IComponent
 {
-    public Fonte FonteA { get; private set; } = estilo.CriarFonteRegular(7.5F);
-    public Fonte FonteB { get; private set; } = estilo.CriarFonteNegrito(7.5F);
-    public DuplicataModel ViewModel { get; private set; } = viewModel;
+    private readonly List<DuplicataModel> _duplicatas = duplicatas;
+    private readonly EstiloElement _estilo = estilo;
 
-    private static readonly string[] Chaves = { "Número", "Vencimento:", "Valor:" };
-
-    public override void Draw(Gfx gfx)
+    public void Compose(IContainer container)
     {
-        base.Draw(gfx);
-
-        var r = BoundingBox.InflatedRetangle(Estilo.PaddingSuperior, Estilo.PaddingInferior, Estilo.PaddingHorizontal);
-
-        string[] valores = { ViewModel.Numero, ViewModel.Vecimento.Formatar(), ViewModel.Valor.FormatarMoeda() };
-
-        for (int i = 0; i < Chaves.Length; i++)
+        container.Table(table =>
         {
-            gfx.DrawString(Chaves[i], r, FonteA, AlinhamentoHorizontal.Esquerda);
-            gfx.DrawString(valores[i], r, FonteB, AlinhamentoHorizontal.Direita);
-            r = r.CutTop(FonteB.AlturaLinha);
-        }
+            table.ColumnsDefinition(columns =>
+            {
+                columns.RelativeColumn();
+                columns.RelativeColumn();
+                columns.RelativeColumn();
+            });
 
+            table.Header(header =>
+            {
+                header.Cell().Element(CabecalhoCell).Text("Número").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                header.Cell().Element(CabecalhoCell).Text("Vencimento").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+                header.Cell().Element(CabecalhoCell).Text("Valor").Style(_estilo.CabecalhoStyle(TextStyle.Default));
+            });
+
+            foreach (var duplicata in _duplicatas)
+            {
+                table.Cell().Element(ContentCell).Text(duplicata.Numero).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                table.Cell().Element(ContentCell).Text(Formatter.Format(duplicata.Vecimento)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+                table.Cell().Element(ContentCell).AlignRight().Text(Formatter.Format(duplicata.Valor)).Style(_estilo.ConteudoStyle(TextStyle.Default));
+            }
+        });
     }
 
-    public override float Height
-    {
-        get => 3 * FonteB.AlturaLinha + Estilo.PaddingSuperior + Estilo.PaddingInferior;
-        set => throw new NotSupportedException();
-    }
+    private IContainer CabecalhoCell(IContainer container) => container.Background(_estilo.CorFundoCabecalho).Padding(1).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda);
+    private IContainer ContentCell(IContainer container) => container.Padding(1).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda);
 }

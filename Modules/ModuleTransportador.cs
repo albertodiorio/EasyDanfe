@@ -1,52 +1,53 @@
-﻿using EasyDanfe.Constants;
-using EasyDanfe.Elements;
-using EasyDanfe.Enums;
+﻿using EasyDanfe.Elements;
 using EasyDanfe.Models;
 using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-internal class ModuleTransportador : ModuleBase
+public class ModuleTransportador
 {
-    public const float LarguraCampoPlacaVeiculo = 22F * Proporcao;
-    public const float LarguraCampoCodigoAntt = 30F * Proporcao;
-    public const float LarguraCampoCnpj = 31F * Proporcao;
-    public const float LarguraCampoUf = 7F * Proporcao;
-    public const float LarguraFrete = 34F * Proporcao;
+    private readonly DanfeModel _viewModel;
+    private readonly EstiloElement _estilo;
 
-    public ModuleTransportador(DanfeModel viewModel, EstiloElement campoEstilo) : base(viewModel, campoEstilo)
+    public ModuleTransportador(DanfeModel viewModel, EstiloElement estilo)
     {
-        var transportadora = viewModel.Transportadora;
-
-        AdicionarLinhaCampos()
-            .ComCampo(Strings.RazaoSocial, transportadora.RazaoSocial)
-            .ComCampo("Frete", transportadora.ModalidadeFreteString, AlinhamentoHorizontal.Centro)
-            .ComCampo("Código ANTT", transportadora.CodigoAntt, AlinhamentoHorizontal.Centro)
-            .ComCampo("Placa do Veículo", transportadora.Placa, AlinhamentoHorizontal.Centro)
-            .ComCampo(Strings.UF, transportadora.VeiculoUf, AlinhamentoHorizontal.Centro)
-            .ComCampo(Strings.CnpjCpf, Formatter.FormatarCnpj(transportadora.CnpjCpf), AlinhamentoHorizontal.Centro)
-            .ComLarguras(0, LarguraFrete, LarguraCampoCodigoAntt, LarguraCampoPlacaVeiculo, LarguraCampoUf, LarguraCampoCnpj);
-
-        AdicionarLinhaCampos()
-            .ComCampo(Strings.Endereco, transportadora.EnderecoLogadrouro)
-            .ComCampo(Strings.Municipio, transportadora.Municipio)
-            .ComCampo(Strings.UF, transportadora.EnderecoUf, AlinhamentoHorizontal.Centro)
-            .ComCampo(Strings.InscricaoEstadual, transportadora.Ie, AlinhamentoHorizontal.Centro)
-            .ComLarguras(0, LarguraCampoPlacaVeiculo + LarguraCampoCodigoAntt, LarguraCampoUf, LarguraCampoCnpj);
-
-        var l = (LarguraCampoCodigoAntt + LarguraCampoPlacaVeiculo + LarguraCampoUf + LarguraCampoCnpj) / 3F;
-
-        AdicionarLinhaCampos()
-            .ComCampoNumerico(Strings.Quantidade, transportadora.QuantidadeVolumes, 3)
-            .ComCampo("Espécie", transportadora.Especie)
-            .ComCampo("Marca", transportadora.Marca)
-            .ComCampo("Numeração", transportadora.Numeracao)
-            .ComCampoNumerico("Peso Bruto", transportadora.PesoBruto, 3)
-            .ComCampoNumerico("Peso Líquido", transportadora.PesoLiquido, 3)
-            .ComLarguras(20F / 200F * 100, 0, 0, l, l, l);
-
+        _viewModel = viewModel;
+        _estilo = estilo;
     }
 
-    public override PosicaoBloco Posicao => PosicaoBloco.Topo;
-    public override string Cabecalho => "Transportador / Volumes Transportados";
+    public void Compose(IContainer container)
+    {
+        container.Column(column =>
+        {
+            column.Item().Component(new CabecalhoBlocoElement("TRANSPORTADOR / VOLUMES TRANSPORTADOS", _estilo));
+
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(2).Component(new CampoElement("MODALIDADE DO FRETE", _viewModel.Transportadora.ModalidadeFreteString, _estilo));
+                row.RelativeItem(4).Component(new CampoElement("NOME / RAZÃO SOCIAL", _viewModel.Transportadora.RazaoSocial, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("CNPJ / CPF", Formatter.FormatCnpjCpf(_viewModel.Transportadora.CnpjCpf), _estilo));
+                row.RelativeItem(2).Component(new CampoElement("INSCRIÇÃO ESTADUAL", _viewModel.Transportadora.Ie, _estilo));
+            }));
+
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(4).Component(new CampoElement("ENDEREÇO", _viewModel.Transportadora.EnderecoLinha1, _estilo));
+                row.RelativeItem(3).Component(new CampoElement("MUNICÍPIO", _viewModel.Transportadora.Municipio, _estilo));
+                row.RelativeItem(1).Component(new CampoElement("UF", _viewModel.Transportadora.EnderecoUf, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("PLACA DO VEÍCULO", _viewModel.Transportadora.Placa, _estilo));
+            }));
+
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(2).Component(new CampoNumericoElement("QUANTIDADE", Formatter.Format(_viewModel.Transportadora.QuantidadeVolumes), _estilo));
+                row.RelativeItem(2).Component(new CampoElement("ESPÉCIE", _viewModel.Transportadora.Especie, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("MARCA", _viewModel.Transportadora.Marca, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("NUMERAÇÃO", _viewModel.Transportadora.Numeracao, _estilo));
+                row.RelativeItem(1).Component(new CampoNumericoElement("PESO BRUTO", Formatter.Format(_viewModel.Transportadora.PesoBruto), _estilo));
+                row.RelativeItem(1).Component(new CampoNumericoElement("PESO LÍQUIDO", Formatter.Format(_viewModel.Transportadora.PesoLiquido), _estilo));
+            }));
+        });
+    }
 }

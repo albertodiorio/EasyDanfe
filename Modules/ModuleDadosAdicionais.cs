@@ -1,53 +1,26 @@
 ﻿using EasyDanfe.Elements;
-using EasyDanfe.Enums;
-using EasyDanfe.Graphics;
 using EasyDanfe.Models;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-internal class ModuleDadosAdicionais : ModuleBase
+public class ModuleDadosAdicionais(DanfeModel viewModel, EstiloElement estilo)
 {
-    public const float AlturaMinima = 25;
-    private readonly CampoMultilinhaElement _cInfComplementares;
-    private readonly FlexibleLineElement _Linha;
-    private readonly CampoElement _cReservadoFisco;
-    public const float InfComplementaresLarguraPorcentagem = 75;
+    private readonly DanfeModel _viewModel = viewModel;
+    private readonly EstiloElement _estilo = estilo;
 
-    public ModuleDadosAdicionais(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    public void Compose(IContainer container)
     {
-        _cInfComplementares = new CampoMultilinhaElement("Informações Complementares", ViewModel.TextoAdicional(), estilo);
-        _cReservadoFisco = new CampoMultilinhaElement("Reservado ao fisco", ViewModel.TextoAdicionalFisco(), estilo);
-
-        _Linha = new FlexibleLineElement() { Height = _cInfComplementares.Height }
-        .ComElemento(_cInfComplementares)
-        .ComElemento(_cReservadoFisco)
-        .ComLarguras(InfComplementaresLarguraPorcentagem, 0);
-
-        MainVerticalStack.Add(_Linha);
-    }
-
-    public override float Width
-    {
-        get => base.Width;
-        set
+        container.Column(column =>
         {
-            base.Width = value;
-            // Força o ajuste da altura do InfComplementares
-            if (_cInfComplementares != null && _Linha != null)
+            column.Item().Component(new CabecalhoBlocoElement("DADOS ADICIONAIS", _estilo));
+
+            column.Item().Component(new LinhaCamposElement(row =>
             {
-                _Linha.Width = value;
-                _Linha.Posicionar();
-                _cInfComplementares.Height = AlturaMinima;
-                _Linha.Height = _cInfComplementares.Height;
-            }
-        }
+                row.RelativeItem(7).Component(new CampoMultilinhaElement("INFORMAÇÕES COMPLEMENTARES", _viewModel.InformacoesComplementares, _estilo));
+                row.RelativeItem(3).Component(new CampoMultilinhaElement("RESERVADO AO FISCO", _viewModel.InformacoesFisco, _estilo));
+            }));
+        });
     }
-
-    public override void Draw(Gfx gfx)
-    {
-        base.Draw(gfx);
-    }
-
-    public override PosicaoBloco Posicao => PosicaoBloco.Base;
-    public override string Cabecalho => "Dados adicionais";
 }

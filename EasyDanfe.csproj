@@ -7,12 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Graphics\" />
-    <Folder Include="Structs\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Zeus.Net.NFe.Danfe.PdfClown" />
+    <PackageReference Include="BarcodeLib" />
+    <PackageReference Include="QuestPDF" />
+    <PackageReference Include="System.Drawing.Common" />
+    <PackageReference Include="ZXing.Net" />
   </ItemGroup>
 
 </Project>

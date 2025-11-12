@@ -1,37 +1,20 @@
-﻿using EasyDanfe.Enums;
-using EasyDanfe.Extensions;
-using EasyDanfe.Graphics;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-class NumeroNfSerieElement(EstiloElement estilo, string nfNumero, string nfSerie) : ElementBase(estilo)
+public class NumeroNfSerieElement(string numero, string serie, EstiloElement estilo) : IComponent
 {
-    public string NfNumero { get; private set; } = nfNumero;
-    public string NfSerie { get; private set; } = nfSerie;
+    private readonly string _numero = numero;
+    private readonly string _serie = serie;
+    private readonly EstiloElement _estilo = estilo;
 
-    public override void Draw(Gfx gfx)
+    public void Compose(IContainer container)
     {
-        base.Draw(gfx);
-
-        var r = BoundingBox.InflatedRetangle(1);
-
-        var f1 = Estilo.CriarFonteNegrito(14);
-        var f2 = Estilo.CriarFonteNegrito(11F);
-
-        gfx.DrawString("NF-e", r, f1, AlinhamentoHorizontal.Centro);
-
-        r = r.CutTop(f1.AlturaLinha);
-
-        var ts = new TextStackElement(r)
+        container.Column(column =>
         {
-            AlinhamentoHorizontal = AlinhamentoHorizontal.Centro,
-            AlinhamentoVertical = AlinhamentoVertical.Centro,
-            LineHeightScale = 1F
-        }
-        .AddLine($"Nº.: {NfNumero}", f2)
-        .AddLine($"Série: {NfSerie}", f2);
-
-        ts.Draw(gfx);
-
+            column.Item().Component(new CampoElement("Nº", _numero, _estilo));
+            column.Item().Component(new CampoElement("SÉRIE", _serie, _estilo));
+        });
     }
 }

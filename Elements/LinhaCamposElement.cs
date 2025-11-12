@@ -1,36 +1,14 @@
-﻿using EasyDanfe.Enums;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-/// <summary>
-/// Linha de campos, posiciona e muda a largura desses elementos de forma proporcional.
-/// </summary>
-internal class LinhaCamposElement : FlexibleLineElement
+public class LinhaCamposElement(Action<RowDescriptor> compose) : IComponent
 {
-    public EstiloElement Estilo { get; private set; }
+    private readonly Action<RowDescriptor> _compose = compose;
 
-    public LinhaCamposElement(EstiloElement estilo, float width, float height = Constants.Constants.CampoAltura) : base()
+    public void Compose(IContainer container)
     {
-        Estilo = estilo;
-        SetSize(width, height);
-    }
-
-    public LinhaCamposElement(EstiloElement estilo) : base()
-    {
-        Estilo = estilo;
-    }
-
-    public virtual LinhaCamposElement ComCampo(string cabecalho, string conteudo, AlinhamentoHorizontal alinhamentoHorizontalConteudo = AlinhamentoHorizontal.Esquerda)
-    {
-        var campo = new CampoElement(cabecalho, conteudo, Estilo, alinhamentoHorizontalConteudo);
-        Elementos.Add(campo);
-        return this;
-    }
-
-    public virtual LinhaCamposElement ComCampoNumerico(string cabecalho, decimal? conteudoNumerico, int casasDecimais = 2)
-    {
-        var campo = new CampoNumericoElement(cabecalho, conteudoNumerico, Estilo, casasDecimais);
-        Elementos.Add(campo);
-        return this;
+        container.Row(_compose);
     }
 }

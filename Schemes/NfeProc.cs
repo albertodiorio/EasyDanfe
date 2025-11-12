@@ -1,5 +1,4 @@
-﻿using EasyDanfe.Structs;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace EasyDanfe.Schemes;
 
@@ -23,13 +22,13 @@ public class Ide
     public string Serie { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "nNF", Namespace = "http://www.portalfiscal.inf.br/nfe")]
-    public int NNF { get; set; }
+    public string NNF { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "dhEmi", Namespace = "http://www.portalfiscal.inf.br/nfe")]
     public DateTime DhEmi { get; set; }
 
     [XmlElement(ElementName = "tpNF", Namespace = "http://www.portalfiscal.inf.br/nfe")]
-    public int TpNF { get; set; }
+    public string TpNF { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "idDest", Namespace = "http://www.portalfiscal.inf.br/nfe")]
     public int IdDest { get; set; }
@@ -41,13 +40,13 @@ public class Ide
     public int TpImp { get; set; }
 
     [XmlElement(ElementName = "tpEmis", Namespace = "http://www.portalfiscal.inf.br/nfe")]
-    public int TpEmis { get; set; }
+    public string TpEmis { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "cDV", Namespace = "http://www.portalfiscal.inf.br/nfe")]
     public int CDV { get; set; }
 
     [XmlElement(ElementName = "tpAmb", Namespace = "http://www.portalfiscal.inf.br/nfe")]
-    public int TpAmb { get; set; }
+    public string TpAmb { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "finNFe", Namespace = "http://www.portalfiscal.inf.br/nfe")]
     public int FinNFe { get; set; }
@@ -206,7 +205,7 @@ public class Prod
     public int CEST { get; set; }
 
     [XmlElement(ElementName = "CFOP", Namespace = "http://www.portalfiscal.inf.br/nfe")]
-    public int CFOP { get; set; }
+    public string CFOP { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "uCom", Namespace = "http://www.portalfiscal.inf.br/nfe")]
     public string UCom { get; set; } = string.Empty;
@@ -730,7 +729,7 @@ public class InfProt
     public string ChNFe { get; set; } = string.Empty;
 
     [XmlElement(ElementName = "dhRecbto", Namespace = "http://www.portalfiscal.inf.br/nfe")]
-    public DateTimeOffsetIso8601 DhRecbto { get; set; }
+    public DateTime DhRecbto { get; set; }
 
     [XmlElement(ElementName = "nProt", Namespace = "http://www.portalfiscal.inf.br/nfe")]
     public string NProt { get; set; } = string.Empty;

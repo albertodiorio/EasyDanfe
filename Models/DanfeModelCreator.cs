@@ -1,7 +1,6 @@
 ﻿using EasyDanfe.Enums;
 using EasyDanfe.Schemes;
 using EasyDanfe.Utils;
-using NFe.Danfe.PdfClown.Esquemas;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -10,13 +9,6 @@ namespace EasyDanfe.Models;
 
 public static class DanfeModelCreator
 {
-    public static readonly IEnumerable<FormaEmissao> FormasEmissaoSuportadas =
-    [
-        FormaEmissao.Normal,
-        FormaEmissao.ContingenciaSVCAN,
-        FormaEmissao.ContingenciaSVCRS
-    ];
-
     private static EmpresaModel CreateEmpresaFromEmitente(Emit emit)
     {
         var empresaModel = new EmpresaModel()
@@ -32,8 +24,6 @@ public static class DanfeModelCreator
             Municipio = emit.EnderEmit.XMun,
             EnderecoUf = emit.EnderEmit.UF,
             EnderecoCep = emit.EnderEmit.CEP,
-            EnderecoComplemento = string.Empty, // A NF-e nova não tem xCpl em EnderEmit
-            Telefone = string.Empty,             // Não há campo fone na estrutura nova
             IM = emit.IM,
             CRT = emit.CRT
         };
@@ -112,18 +102,18 @@ public static class DanfeModelCreator
         var infNfe = nfe.InfNFe;
         var ide = infNfe.Ide;
 
-        danfeModel.TipoEmissao = ConverterTipoEmissao(ide);
+        danfeModel.TipoEmissao = ide.TpEmis;
         danfeModel.NaturezaOperacao = ide.NatOp;
-        danfeModel.NfNumero = ide.NNF;
-        danfeModel.NfSerie = ide.Serie;
+        danfeModel.Numero = ide.NNF;
+        danfeModel.Serie = ide.Serie;
         danfeModel.ChaveAcesso = TratarChaveAcesso(infNfe);
         danfeModel.TipoAmbiente = ide.TpAmb;
-        danfeModel.TipoNF = ide.TpNF;
+        danfeModel.TipoNf = ide.TpNF;
         danfeModel.Orientacao = ConverterOrientacao(ide);
         danfeModel.Emitente = CreateEmpresaFromEmitente(infNfe.Emit);
         danfeModel.Destinatario = CreateEmpresaFromDestinatario(infNfe.Dest);
         danfeModel.ProtocoloAutorizacao = TratarProtocoloAutorizacao(nfeProc);
-        danfeModel.DataHoraEmissao = ide.DhEmi;
+        danfeModel.DataEmissao = ide.DhEmi;
         danfeModel.CalculoImposto = CreateCalculoImposto(infNfe.Total);
 
         foreach (var det in infNfe.Det)
@@ -137,7 +127,7 @@ public static class DanfeModelCreator
         danfeModel.Transportadora = CreateTransportadora(infNfe.Transp);
 
         danfeModel.InformacoesComplementares = infNfe.InfAdic.InfCpl;
-        danfeModel.InformacoesAdicionaisFisco = infNfe.InfAdic.InfAdFisco;
+        danfeModel.InformacoesFisco = infNfe.InfAdic.InfAdFisco;
 
         return danfeModel;
     }
@@ -162,7 +152,10 @@ public static class DanfeModelCreator
 
     private static string TratarProtocoloAutorizacao(NfeProc nfeProc)
     {
-        return string.Format(Formatter.Cultura, "{0} - {1}", nfeProc.ProtNFe.InfProt.NProt, nfeProc.ProtNFe.InfProt.DhRecbto.DateTimeOffsetValue.DateTime);
+        // Fix for CS1061: Use DhRecbto directly, which is DateTime
+        return string.Format("{0} - {1}",
+            nfeProc.ProtNFe.InfProt.NProt,
+            Formatter.Format(nfeProc.ProtNFe.InfProt.DhRecbto));
     }
     private static Orientacao ConverterOrientacao(Ide ide)
     {
@@ -174,19 +167,13 @@ public static class DanfeModelCreator
         return infNfe.Id.Replace("NFe", string.Empty);
     }
 
-    private static FormaEmissao ConverterTipoEmissao(Ide ide)
-    {
-        return (FormaEmissao)ide.TpEmis;
-    }
-
     private static string MontarDescricaoComImpostos(Det det)
     {
         var descricao = new StringBuilder();
-        descricao.AppendLine(det.Prod.XProd);
-        descricao.Append($"IVA/MA: {det.Imposto.ICMS.ICMS10.PMVAST.Formatar()}% ");
-        descricao.Append($"{nameof(det.Imposto.ICMS.ICMS10.PICMSST)}: {det.Imposto.ICMS.ICMS10.PICMSST.Formatar()}% ");
-        descricao.Append($"{nameof(det.Imposto.ICMS.ICMS10.VBCST)}: {det.Imposto.ICMS.ICMS10.VBCST.Formatar()}% ");
-        descricao.Append($"{nameof(det.Imposto.ICMS.ICMS10.VICMSST)}: {det.Imposto.ICMS.ICMS10.VICMSST.Formatar()}% ");
+        descricao.AppendLine($"IVA/MA: {Formatter.Format(det.Imposto.ICMS.ICMS10.PMVAST)}% ");
+        descricao.AppendLine($"{nameof(det.Imposto.ICMS.ICMS10.PICMSST)}: {Formatter.Format(det.Imposto.ICMS.ICMS10.PICMSST)}% ");
+        descricao.AppendLine($"{nameof(det.Imposto.ICMS.ICMS10.VBCST)}: {Formatter.Format(det.Imposto.ICMS.ICMS10.VBCST)}% ");
+        descricao.AppendLine($"{nameof(det.Imposto.ICMS.ICMS10.VICMSST)}: {Formatter.Format(det.Imposto.ICMS.ICMS10.VICMSST)}% ");
 
         return descricao.ToString();
     }
@@ -217,7 +204,8 @@ public static class DanfeModelCreator
         return new ProdutoModel()
         {
             Codigo = det.Prod.CProd,
-            Descricao = MontarDescricaoComImpostos(det),
+            Descricao = det.Prod.XProd,
+            DescricaoImpostos = MontarDescricaoComImpostos(det),
             Ncm = det.Prod.NCM,
             Cfop = det.Prod.CFOP,
             Unidade = det.Prod.UCom,

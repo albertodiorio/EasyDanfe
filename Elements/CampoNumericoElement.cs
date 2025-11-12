@@ -1,19 +1,20 @@
-﻿using EasyDanfe.Enums;
-using EasyDanfe.Graphics;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-/// <summary>
-/// Campo para valores numéricos.
-/// </summary>
-internal class CampoNumericoElement(string cabecalho, decimal? conteudoNumerico, EstiloElement estilo, int casasDecimais = 2) : CampoElement(cabecalho, null, estilo, AlinhamentoHorizontal.Direita)
+public class CampoNumericoElement(string cabecalho, string conteudo, EstiloElement estilo) : IComponent
 {
-    private decimal? ConteudoNumerico { get; set; } = conteudoNumerico;
-    public int CasasDecimais { get; set; } = casasDecimais;
+    private readonly string _cabecalho = cabecalho;
+    private readonly string _conteudo = conteudo;
+    private readonly EstiloElement _estilo = estilo;
 
-    protected override void DesenharConteudo(Gfx gfx)
+    public void Compose(IContainer container)
     {
-        base.Conteudo = ConteudoNumerico.HasValue ? ConteudoNumerico.Value.ToString($"N{CasasDecimais}", Utils.Formatter.Cultura) : null;
-        base.DesenharConteudo(gfx);
+        container.Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda).Padding(1).Column(column =>
+        {
+            column.Item().Text(_cabecalho).Style(_estilo.CabecalhoStyle(TextStyle.Default));
+            column.Item().AlignRight().Text(_conteudo).Style(_estilo.ConteudoStyle(TextStyle.Default));
+        });
     }
 }

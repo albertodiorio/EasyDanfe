@@ -1,23 +1,31 @@
 ﻿using EasyDanfe.Elements;
-using EasyDanfe.Enums;
 using EasyDanfe.Models;
+using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-internal class ModuleCalculoIssqn : ModuleBase
+public class ModuleCalculoIssqn(DanfeModel viewModel, EstiloElement estilo)
 {
-    public ModuleCalculoIssqn(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    private readonly DanfeModel _viewModel = viewModel;
+    private readonly EstiloElement _estilo = estilo;
+
+    public void Compose(IContainer container)
     {
-        var m = viewModel.CalculoIssqn;
+        if (!_viewModel.CalculoIssqn.Mostrar)
+            return;
 
-        AdicionarLinhaCampos()
-            .ComCampo("INSCRIÇÃO MUNICIPAL", m.InscricaoMunicipal, AlinhamentoHorizontal.Centro)
-            .ComCampoNumerico("VALOR TOTAL DOS SERVIÇOS", m.ValorTotalServicos)
-            .ComCampoNumerico("BASE DE CÁLCULO DO ISSQN", m.BaseIssqn)
-            .ComCampoNumerico("VALOR TOTAL DO ISSQN", m.ValorIssqn)
-            .ComLargurasIguais();
+        container.Column(column =>
+        {
+            column.Item().Component(new CabecalhoBlocoElement("CÁLCULO DO ISSQN", _estilo));
+
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(3).Component(new CampoNumericoElement("BASE DE CÁLCULO DO ISSQN", Formatter.Format(_viewModel.CalculoIssqn.BaseIssqn), _estilo));
+                row.RelativeItem(3).Component(new CampoNumericoElement("VALOR TOTAL DO ISSQN", Formatter.Format(_viewModel.CalculoIssqn.ValorIssqn), _estilo));
+                row.RelativeItem(4).Component(new CampoNumericoElement("VALOR TOTAL DOS SERVIÇOS", Formatter.Format(_viewModel.CalculoIssqn.ValorTotalServicos), _estilo));
+            }));
+        });
     }
-
-    public override PosicaoBloco Posicao => PosicaoBloco.Base;
-    public override string Cabecalho => "CÁLCULO DO ISSQN";
 }

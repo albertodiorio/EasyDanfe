@@ -1,203 +1,56 @@
-﻿using EasyDanfe.Graphics;
-using System.Drawing;
-using System.Text.RegularExpressions;
+﻿using BarcodeStandard;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using SkiaSharp;
 
 namespace EasyDanfe.Elements;
 
-/// <summary>
-/// Desenha o Código de Barras Code 128C 
-/// </summary>
-internal class Barcode128CElement : ElementBase
+public class Barcode128CElement : IComponent
 {
-    private static readonly byte[][] Dic =
-    [
-        [2, 1, 2, 2, 2, 2],
-        [2, 2, 2, 1, 2, 2],
-        [2, 2, 2, 2, 2, 1],
-        [1, 2, 1, 2, 2, 3],
-        [1, 2, 1, 3, 2, 2],
-        [1, 3, 1, 2, 2, 2],
-        [1, 2, 2, 2, 1, 3],
-        [1, 2, 2, 3, 1, 2],
-        [1, 3, 2, 2, 1, 2],
-        [2, 2, 1, 2, 1, 3],
-        [2, 2, 1, 3, 1, 2],
-        [2, 3, 1, 2, 1, 2],
-        [1, 1, 2, 2, 3, 2],
-        [1, 2, 2, 1, 3, 2],
-        [1, 2, 2, 2, 3, 1],
-        [1, 1, 3, 2, 2, 2],
-        [1, 2, 3, 1, 2, 2],
-        [1, 2, 3, 2, 2, 1],
-        [2, 2, 3, 2, 1, 1],
-        [2, 2, 1, 1, 3, 2],
-        [2, 2, 1, 2, 3, 1],
-        [2, 1, 3, 2, 1, 2],
-        [2, 2, 3, 1, 1, 2],
-        [3, 1, 2, 1, 3, 1],
-        [3, 1, 1, 2, 2, 2],
-        [3, 2, 1, 1, 2, 2],
-        [3, 2, 1, 2, 2, 1],
-        [3, 1, 2, 2, 1, 2],
-        [3, 2, 2, 1, 1, 2],
-        [3, 2, 2, 2, 1, 1],
-        [2, 1, 2, 1, 2, 3],
-        [2, 1, 2, 3, 2, 1],
-        [2, 3, 2, 1, 2, 1],
-        [1, 1, 1, 3, 2, 3],
-        [1, 3, 1, 1, 2, 3],
-        [1, 3, 1, 3, 2, 1],
-        [1, 1, 2, 3, 1, 3],
-        [1, 3, 2, 1, 1, 3],
-        [1, 3, 2, 3, 1, 1],
-        [2, 1, 1, 3, 1, 3],
-        [2, 3, 1, 1, 1, 3],
-        [2, 3, 1, 3, 1, 1],
-        [1, 1, 2, 1, 3, 3],
-        [1, 1, 2, 3, 3, 1],
-        [1, 3, 2, 1, 3, 1],
-        [1, 1, 3, 1, 2, 3],
-        [1, 1, 3, 3, 2, 1],
-        [1, 3, 3, 1, 2, 1],
-        [3, 1, 3, 1, 2, 1],
-        [2, 1, 1, 3, 3, 1],
-        [2, 3, 1, 1, 3, 1],
-        [2, 1, 3, 1, 1, 3],
-        [2, 1, 3, 3, 1, 1],
-        [2, 1, 3, 1, 3, 1],
-        [3, 1, 1, 1, 2, 3],
-        [3, 1, 1, 3, 2, 1],
-        [3, 3, 1, 1, 2, 1],
-        [3, 1, 2, 1, 1, 3],
-        [3, 1, 2, 3, 1, 1],
-        [3, 3, 2, 1, 1, 1],
-        [3, 1, 4, 1, 1, 1],
-        [2, 2, 1, 4, 1, 1],
-        [4, 3, 1, 1, 1, 1],
-        [1, 1, 1, 2, 2, 4],
-        [1, 1, 1, 4, 2, 2],
-        [1, 2, 1, 1, 2, 4],
-        [1, 2, 1, 4, 2, 1],
-        [1, 4, 1, 1, 2, 2],
-        [1, 4, 1, 2, 2, 1],
-        [1, 1, 2, 2, 1, 4],
-        [1, 1, 2, 4, 1, 2],
-        [1, 2, 2, 1, 1, 4],
-        [1, 2, 2, 4, 1, 1],
-        [1, 4, 2, 1, 1, 2],
-        [1, 4, 2, 2, 1, 1],
-        [2, 4, 1, 2, 1, 1],
-        [2, 2, 1, 1, 1, 4],
-        [4, 1, 3, 1, 1, 1],
-        [2, 4, 1, 1, 1, 2],
-        [1, 3, 4, 1, 1, 1],
-        [1, 1, 1, 2, 4, 2],
-        [1, 2, 1, 1, 4, 2],
-        [1, 2, 1, 2, 4, 1],
-        [1, 1, 4, 2, 1, 2],
-        [1, 2, 4, 1, 1, 2],
-        [1, 2, 4, 2, 1, 1],
-        [4, 1, 1, 2, 1, 2],
-        [4, 2, 1, 1, 1, 2],
-        [4, 2, 1, 2, 1, 1],
-        [2, 1, 2, 1, 4, 1],
-        [2, 1, 4, 1, 2, 1],
-        [4, 1, 2, 1, 2, 1],
-        [1, 1, 1, 1, 4, 3],
-        [1, 1, 1, 3, 4, 1],
-        [1, 3, 1, 1, 4, 1],
-        [1, 1, 4, 1, 1, 3],
-        [1, 1, 4, 3, 1, 1],
-        [4, 1, 1, 1, 1, 3],
-        [4, 1, 1, 3, 1, 1],
-        [1, 1, 3, 1, 4, 1],
-        [1, 1, 4, 1, 3, 1],
-        [3, 1, 1, 1, 4, 1],
-        [4, 1, 1, 1, 3, 1],
-        [2, 1, 1, 4, 1, 2],
-        [2, 1, 1, 2, 1, 4],
-        [2, 1, 1, 2, 3, 2],
-        [2, 3, 3, 1, 1, 1, 2],
-    ];
+    private readonly string _chaveAcesso;
+    private readonly float _scale;
 
-    public static readonly float MargemVertical = 2;
-
-    /// <summary>
-    /// Código a ser codificado em barras.
-    /// </summary>
-    public string Code { get; private set; }
-
-    /// <summary>
-    /// Largura do código de barras.
-    /// </summary>
-    public float Largura { get; set; }
-
-    public Barcode128CElement(string code, EstiloElement estilo, float largura = 75F) : base(estilo)
+    public Barcode128CElement(string chaveAcesso, float scale = 1.0f)
     {
-        // Normalize and validate 'code' using null-coalescing and regular expression.
-        code = code?.Trim() ?? throw new ArgumentException("O código não pode ser vazio.", nameof(code));
-
-        if (!Regex.IsMatch(code, @"^\d+$"))
-        {
-            throw new ArgumentException("O código deve apenas conter digítos numéricos.", nameof(code));
-        }
-
-        // Prepend '0' if odd length, assign using ternary operator.
-        Code = (code.Length % 2 != 0) ? "0" + code : code;
-
-        Largura = largura;
+        _chaveAcesso = chaveAcesso;
+        _scale = scale;
     }
 
-    private void DrawBarcode(RectangleF rect, Gfx gfx)
+    public void Compose(IContainer container)
     {
-        List<byte> codeBytes = [105];
-
-        for (int i = 0; i < Code.Length; i += 2)
+        var barcodePng = GenerateBarcodePng(_chaveAcesso, _scale);
+        if (barcodePng is not null)
         {
-            byte b = byte.Parse(Code.Substring(i, 2));
-            codeBytes.Add(b);
-        }
-
-        // Calcular dígito verificador
-        int cd = 105;
-
-        for (int i = 1; i < codeBytes.Count; i++)
-        {
-            cd += i * codeBytes[i];
-            cd %= 103;
-        }
-
-        codeBytes.Add((byte)cd);
-        codeBytes.Add(106);
-
-        float n = codeBytes.Count * 11 + 2;
-        float w = rect.Width / n;
-
-        float x = 0;
-
-        for (int i = 0; i < codeBytes.Count; i++)
-        {
-            byte[] pt = Dic[codeBytes[i]];
-
-            for (int i2 = 0; i2 < pt.Length; i2++)
+            container.AlignCenter().Column(column =>
             {
-                if (i2 % 2 == 0)
-                {
-                    gfx.DrawRectangle(rect.X + x, rect.Y, w * pt[i2], rect.Height);
-                }
-
-                x += w * pt[i2];
-            }
+                column.Item().Image(barcodePng);
+                column.Item().Text(_chaveAcesso).AlignCenter().FontSize(4);
+            });
         }
-
-        gfx.Fill();
+        else
+        {
+            container.AlignCenter().Text("Erro ao gerar código de barras").FontSize(6);
+        }
     }
 
-    public override void Draw(Gfx gfx)
+    private static byte[]? GenerateBarcodePng(string content, float scale)
     {
-        base.Draw(gfx);
+        try
+        {
+            var barcode = new Barcode();
+            int symbols = content.Length / 2;
+            int minModules = symbols * 11 + 35;
+            int minBarWidth = 1;
+            int width = (int)(Math.Max(220, minModules * minBarWidth) * scale);
+            int height = (int)(24 * scale);
 
-        float w2 = (Width - Largura) / 2F;
-        DrawBarcode(new RectangleF(X + w2, Y + MargemVertical, Largura, Height - 2 * MargemVertical), gfx);
+            using var skImage = barcode.Encode(BarcodeStandard.Type.Code128, content, SKColors.Black, SKColors.White, width, height);
+            using var data = skImage.Encode(SKEncodedImageFormat.Png, 100);
+            return data.ToArray();
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

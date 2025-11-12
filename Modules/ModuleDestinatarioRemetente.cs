@@ -1,39 +1,44 @@
-﻿using EasyDanfe.Constants;
-using EasyDanfe.Elements;
-using EasyDanfe.Enums;
+﻿using EasyDanfe.Elements;
 using EasyDanfe.Models;
 using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Modules;
 
-internal class ModuleDestinatarioRemetente : ModuleBase
+public class ModuleDestinatarioRemetente(DanfeModel viewModel, EstiloElement estilo)
 {
-    public ModuleDestinatarioRemetente(DanfeModel viewModel, EstiloElement estilo) : base(viewModel, estilo)
+    private readonly DanfeModel _viewModel = viewModel;
+    private readonly EstiloElement _estilo = estilo;
+
+    public void Compose(IContainer container)
     {
-        var destinatario = viewModel.Destinatario;
+        container.Column(column =>
+        {
+            column.Item().Component(new CabecalhoBlocoElement("DESTINATÁRIO / REMETENTE", _estilo));
 
-        AdicionarLinhaCampos()
-        .ComCampo(Strings.RazaoSocial, destinatario.RazaoSocial)
-        .ComCampo(Strings.CnpjCpf, Formatter.FormatarCpfCnpj(destinatario.CnpjCpf), AlinhamentoHorizontal.Centro)
-        .ComCampo("Data de Emissão", viewModel.DataHoraEmissao.Formatar(), AlinhamentoHorizontal.Centro)
-        .ComLarguras(0, 45F * Proporcao, 30F * Proporcao);
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(5).Component(new CampoElement("NOME / RAZÃO SOCIAL", _viewModel.Destinatario.RazaoSocial, _estilo));
+                row.RelativeItem(3).Component(new CampoElement("CNPJ / CPF", Formatter.FormatCnpjCpf(_viewModel.Destinatario.CnpjCpf), _estilo));
+                row.RelativeItem(2).Component(new CampoElement("DATA DA EMISSÃO", Formatter.Format(_viewModel.DataEmissao), _estilo));
+            }));
 
-        AdicionarLinhaCampos()
-        .ComCampo(Strings.Endereco, destinatario.EnderecoLinha1)
-        .ComCampo(Strings.BairroDistrito, destinatario.EnderecoBairro)
-        .ComCampo("CEP", Formatter.FormatarCEP(destinatario.EnderecoCep), AlinhamentoHorizontal.Centro)
-        .ComCampo("Data Entrada / Saída", ViewModel.DataSaidaEntrada.Formatar(), AlinhamentoHorizontal.Centro)
-        .ComLarguras(0, 45F * Proporcao, 25F * Proporcao, 30F * Proporcao);
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(5).Component(new CampoElement("ENDEREÇO", _viewModel.Destinatario.EnderecoLinha1, _estilo));
+                row.RelativeItem(3).Component(new CampoElement("BAIRRO / DISTRITO", _viewModel.Destinatario.EnderecoBairro, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("DATA SAÍDA / ENTRADA", Formatter.Format(_viewModel.DataSaidaEntrada), _estilo));
+            }));
 
-        AdicionarLinhaCampos()
-        .ComCampo(Strings.Municipio, destinatario.Municipio)
-        .ComCampo(Strings.FoneFax, Formatter.FormatarTelefone(destinatario.Telefone), AlinhamentoHorizontal.Centro)
-        .ComCampo(Strings.UF, destinatario.EnderecoUf, AlinhamentoHorizontal.Centro)
-        .ComCampo(Strings.InscricaoEstadual, destinatario.Ie, AlinhamentoHorizontal.Centro)
-        .ComCampo("Hora Entrada / Saída", ViewModel.HoraSaidaEntrada.Formatar(), AlinhamentoHorizontal.Centro)
-        .ComLarguras(0, 35F * Proporcao, 7F * Proporcao, 40F * Proporcao, 30F * Proporcao);
+            column.Item().Component(new LinhaCamposElement(row =>
+            {
+                row.RelativeItem(3).Component(new CampoElement("MUNICÍPIO", _viewModel.Destinatario.Municipio, _estilo));
+                row.RelativeItem(1).Component(new CampoElement("UF", _viewModel.Destinatario.EnderecoUf, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("CEP", Formatter.FormatCep(_viewModel.Destinatario.EnderecoCep), _estilo));
+                row.RelativeItem(2).Component(new CampoElement("INSCRIÇÃO ESTADUAL", _viewModel.Destinatario.Ie, _estilo));
+                row.RelativeItem(2).Component(new CampoElement("TELEFONE", Formatter.FormatTelefone(_viewModel.Destinatario.Telefone), _estilo));
+            }));
+        });
     }
-
-    public override string Cabecalho => "Destinatário / Remetente";
-    public override PosicaoBloco Posicao => PosicaoBloco.Topo;
 }

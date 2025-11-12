@@ -1,25 +1,15 @@
-﻿using EasyDanfe.Extensions;
-using EasyDanfe.Graphics;
-using System.Drawing;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-internal class LinhaTracejadaElement(float margin) : DrawableBase
+public class LinhaTracejadaElement : IComponent
 {
-    public float Margin { get; set; } = margin;
-    public double[] DashPattern { get; set; }
-
-    public override void Draw(Gfx gfx)
+    public void Compose(IContainer container)
     {
-        base.Draw(gfx);
-
-        gfx.PrimitiveComposer.BeginLocalState();
-        gfx.PrimitiveComposer.SetLineDash(new org.pdfclown.documents.contents.LineDash(new double[] { 3, 2 }));
-        gfx.PrimitiveComposer.DrawLine(new PointF(BoundingBox.Left, Y + Margin).ToPointMeasure(), new PointF(BoundingBox.Right, Y + Margin).ToPointMeasure());
-        gfx.PrimitiveComposer.Stroke();
-        gfx.PrimitiveComposer.End();
-
+        container.LineHorizontal(1)
+            .LineColor(Colors.Grey.Lighten1)
+            .LineDashPattern([3, 3]);
     }
-
-    public override float Height { get => 2 * Margin; set => throw new NotSupportedException(); }
 }

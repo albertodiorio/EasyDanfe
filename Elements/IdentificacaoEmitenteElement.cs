@@ -1,78 +1,59 @@
-﻿using EasyDanfe.Enums;
-using EasyDanfe.Extensions;
-using EasyDanfe.Graphics;
-using EasyDanfe.Models;
-using org.pdfclown.documents.contents.xObjects;
-using System.Drawing;
+﻿using EasyDanfe.Models;
+using EasyDanfe.Utils;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 
 namespace EasyDanfe.Elements;
 
-internal class IdentificacaoEmitenteElement : ElementBase
+public class IdentificacaoEmitenteElement(DanfeModel viewModel, EstiloElement estilo) : IComponent
 {
-    public DanfeModel ViewModel { get; private set; }
-    public XObject Logo { get; set; }
+    private readonly DanfeModel _viewModel = viewModel;
+    private readonly EstiloElement _estilo = estilo;
 
-    public IdentificacaoEmitenteElement(EstiloElement estilo, DanfeModel viewModel) : base(estilo)
+    public void Compose(IContainer container)
     {
-        ViewModel = viewModel;
-        Logo = null;
-    }
-
-    public override void Draw(Gfx gfx)
-    {
-        base.Draw(gfx);
-
-        var rp = BoundingBox.InflatedRetangle(0.75F);
-        float alturaMaximaLogoHorizontal = 14F;
-
-        Fonte f2 = Estilo.CriarFonteNegrito(12);
-        Fonte f3 = Estilo.CriarFonteRegular(8);
-
-        if (Logo == null)
+        container.Row(row =>
         {
-            var f1 = Estilo.CriarFonteRegular(6);
-            gfx.DrawString("IDENTIFICAÇÃO DO EMITENTE", rp, f1, AlinhamentoHorizontal.Centro);
-            rp = rp.CutTop(f1.AlturaLinha);
-        }
-        else
-        {
-            RectangleF rLogo;
-
-            // Logo Horizontal
-            if (Logo.Size.Width > Logo.Size.Height)
+            row.RelativeItem(3).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda).Column(column =>
             {
-                rLogo = new RectangleF(rp.X, rp.Y, rp.Width, alturaMaximaLogoHorizontal);
-                rp = rp.CutTop(alturaMaximaLogoHorizontal);
-            }
-            // Logo Vertical / Quadrado
-            else
+                column.Item().Row(logoRow =>
+                {
+                    logoRow.RelativeItem(1).AlignLeft().Text(string.Empty).Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(7);
+                    logoRow.RelativeItem(8).PaddingLeft(1).Column(emitenteColumn =>
+                    {
+                        emitenteColumn.Item().Text(_viewModel.Emitente.RazaoSocial).Style(_estilo.ConteudoNegritoStyle(TextStyle.Default)).FontSize(7).ClampLines(1);
+                        emitenteColumn.Item().Text(_viewModel.Emitente.EnderecoLinha1).Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(7).ClampLines(1);
+                        emitenteColumn.Item().Text($"{_viewModel.Emitente.Municipio} - {_viewModel.Emitente.EnderecoUf}").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(7).ClampLines(1);
+                        emitenteColumn.Item().Text($"Fone: {Formatter.FormatTelefone(_viewModel.Emitente.Telefone)}").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                        emitenteColumn.Item().Text($"CEP: {Formatter.FormatCep(_viewModel.Emitente.EnderecoCep)}").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                        emitenteColumn.Item().Text($"CNPJ: {Formatter.FormatTelefone(_viewModel.Emitente.CnpjCpf)}").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                        emitenteColumn.Item().Text($"I.E: {_viewModel.Emitente.Ie}").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                    });
+                });
+            });
+
+            row.RelativeItem(2).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda).Column(column =>
             {
-                float lw = rp.Height * Logo.Size.Width / Logo.Size.Height;
-                rLogo = new RectangleF(rp.X, rp.Y, lw, rp.Height);
-                rp = rp.CutLeft(lw);
-            }
+                column.Spacing(2);
+                column.Item().Background(_estilo.CorFundoCabecalho).AlignCenter().Text("DANFE").Style(_estilo.ConteudoNegritoStyle(TextStyle.Default)).FontSize(8);
+                column.Item().AlignCenter().Text("DOCUMENTO AUXILIAR DA NOTA FISCAL ELETRÔNICA").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(6).ClampLines(1);
+                column.Item().AlignCenter().Text($"0 - ENTRADA / 1 - SAÍDA [{_viewModel.TipoEmissao}]").Style(_estilo.ConteudoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                column.Item().AlignCenter().Text($"Nº: {_viewModel.Numero}").Style(_estilo.ConteudoNegritoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                column.Item().AlignCenter().Text($"Sérieº: {_viewModel.Serie}").Style(_estilo.ConteudoNegritoStyle(TextStyle.Default)).FontSize(5).ClampLines(1);
+                column.Item().AlignCenter().Text(x =>
+                {
+                    x.DefaultTextStyle(TextStyle.Default.FontSize(5));
+                    x.Span("Folha");
+                    x.CurrentPageNumber();
+                    x.Span(" / ");
+                    x.TotalPages();
+                });
+            });
 
-            gfx.ShowXObject(Logo, rLogo);
-
-        }
-
-        var emitente = ViewModel.Emitente;
-
-        string nome = emitente.RazaoSocial;
-
-        if (ViewModel.PreferirEmitenteNomeFantasia)
-        {
-            nome = !String.IsNullOrWhiteSpace(emitente.NomeFantasia) ? emitente.NomeFantasia : emitente.RazaoSocial;
-        }
-
-        var ts = new TextStackElement(rp) { LineHeightScale = 1 }
-            .AddLine(nome, f2)
-            .AddLine(emitente.EnderecoLinha1.Trim(), f3)
-            .AddLine(emitente.EnderecoLinha2.Trim(), f3)
-            .AddLine(emitente.EnderecoLinha3.Trim(), f3);
-
-        ts.AlinhamentoHorizontal = AlinhamentoHorizontal.Centro;
-        ts.AlinhamentoVertical = AlinhamentoVertical.Centro;
-        ts.Draw(gfx);
+            row.RelativeItem(4).Border(_estilo.EspessuraBorda).BorderColor(_estilo.CorBorda).Column(column =>
+            {
+                column.Item().PaddingTop(10).BorderAlignmentMiddle().Element(c => new Barcode128CElement(_viewModel.ChaveAcesso).Compose(c));
+            });
+        });
     }
 }
